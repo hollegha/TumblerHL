@@ -21,3 +21,5 @@ wird das Vorzeichen manchmal falsch erkannt, weshalb der SegWay dann umfällt.
 Ich werde die Drehzal-Messung auf 2-Kanäle erweitern, dann sollte der SegWay
 absolut stabil werden.
 
+25.03: Neues Video CodeFolding.avi
+
