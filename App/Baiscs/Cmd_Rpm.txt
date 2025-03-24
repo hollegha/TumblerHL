@@ -1,0 +1,28 @@
+
+Pow0   2  0   0
+Pow50  2  500 500
+Pow_50 2  -500 -500
+Pow100 2  1000 1000
+Pow100 2  -1000 -1000
+Pow 2 100 100
+Pow 2 -100 -100
+Pow 2 200 200
+Pow 2 80 80
+Pow 2 -80 -80
+
+DispL   6 1
+DispR   6 2
+DispAll 6 3
+DispPw  6 4
+
+Filt 7 1
+
+Rate 8 1000
+
+RstCnt 4
+
+StbyON  3 1
+StbyOFF 3 0
+
+
+
