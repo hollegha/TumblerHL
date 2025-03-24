@@ -3,6 +3,8 @@
 
 In  \TumblerPrj ist die aktuelle Version von  libRtEnvHL  als compilierbares
 ESP-IDF  Projekt
+idf.py set-target esp32
+idf.py build
 
 Im  \App  Verzeichniss sind verschiedene App's wie z.B.
 RpmTest.cpp  KalmTest.cpp .........
