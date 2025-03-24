@@ -9,3 +9,6 @@ RpmTest.cpp  KalmTest.cpp .........
 In jedem \App Unterverzeichniss befindet sich das Haupprogramm z.B KalmTest.cpp
 und dazu passende SvVisConfig.h und CmdList.txt
 
+Zu dem meisten App's gibt es Erklärungs ( Schulungs ) Videos
+https://drive.google.com/drive/folders/169c7sWOlF6tPdowq96Qbc9-Uq1vyFpqL?usp=sharing
+
