@@ -1,0 +1,15 @@
+
+Calib 6
+
+angleOffs 8 10.0
+dispAngleOffs 8 -1.0
+
+SpeedFilt 7 1
+
+RglON  4 1
+RglOFF 4 0
+
+Rate    9 1000
+RateOFF 9 0
+
+
