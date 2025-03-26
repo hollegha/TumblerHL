@@ -25,4 +25,6 @@ absolut stabil werden.
 
 26.03: Aktuelle ESP32 Pin-Belegung in \doc mit Quadratur-Encoder
 
+26.03 added 2-Chan Encoder SW  LibVers: V1.5
+
 
