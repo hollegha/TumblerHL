@@ -12,7 +12,7 @@ RpmTest.cpp  KalmTest.cpp .........
 In jedem \App Unterverzeichniss befindet sich das Haupprogramm z.B KalmTest.cpp
 und dazu passende SvVisConfig.h und CmdList.txt
 
-Zu dem meisten App's gibt es Erklärungs ( Schulungs ) Videos
+Zu den meisten App's gibt es Erklärungs ( Schulungs ) Videos
 https://drive.google.com/drive/folders/169c7sWOlF6tPdowq96Qbc9-Uq1vyFpqL?usp=sharing
 
 Next Steps:
@@ -22,4 +22,7 @@ Ich werde die Drehzal-Messung auf 2-Kanäle erweitern, dann sollte der SegWay
 absolut stabil werden.
 
 25.03: Neues Video CodeFolding.avi
+
+26.03: Aktuelle ESP32 Pin-Belegung in \doc mit Quadratur-Encoder
+
 
