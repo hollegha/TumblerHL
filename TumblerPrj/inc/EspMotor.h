@@ -109,8 +109,14 @@ public:
   void ISRFunction();
   // Tumbler
   void ISRFunction2();
-  void setBW(int aFiltNum); // 1..small -> 5..big
+  void setBW(int aFiltNum); // 1..small -> 5..big 0..off
+
+  // 1-Chan Encoder
   void CalcFilt();
+
+  // 2-Chan Encoder
+  void CalcFilt2();
+
   void CalcDiff(float aVal);
   // unsigned
   float getFrequUS() 
@@ -148,6 +154,7 @@ public:
   {
     actDir = *dirFlag;;
   }
+  void checkDir();
 private:
   int _dirPin, _intrPin;
   float actDir, *dirFlag;
@@ -160,6 +167,7 @@ public:
   uint32_t cnt;
   uint32_t pw;
   float diff;
+  bool inv;
 };
 
 
