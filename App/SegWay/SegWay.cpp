@@ -10,7 +10,7 @@
 
 SvProtocol2 ua0;
 
-float angleOffs = 10.0;
+float angleOffs = 0.0;
 
 // KP KD KI KS
 BalanceController balC(2E-2, 4E-4, 0, 3E-3, "BalC");
@@ -87,7 +87,7 @@ void CommandLoop()
 extern "C" void RPM_Task(void* arg)
 {
   limL.CalcOneStep(); limR.CalcOneStep();
-  encL.CalcFilt(); encR.CalcFilt();
+  encL.CalcFilt2(); encR.CalcFilt2();
   DoDisplay();
 }
 
@@ -132,7 +132,7 @@ void DoDisplay()
 
 extern "C" void app_main(void)
 {
-  printf("SegWay_5\n");
+  printf("SegWay_1\n");
   InitRtEnvHL(); printf("after InitRT\n");
   I2cInit(); printf("Conn: %X\n", mpu.testConnection()); mpu.Init();
   InitIO();
