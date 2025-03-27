@@ -24,7 +24,9 @@ absolut stabil werden.
 25.03: Neues Video CodeFolding.avi  
 26.03: Aktuelle ESP32 Pin-Belegung in \doc mit Quadratur-Encoder  
 26.03 added 2-Chan Encoder SW  LibVers: V1.7  
-27.03 SegWay update auf 2-Chan Encoder
+27.03 SegWay update auf 2-Chan Encoder  
+27.03 Neues Video Using_SvVis.avi
+
 
 
 
