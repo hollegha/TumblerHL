@@ -73,8 +73,8 @@ void CommandLoop()
       esp_restart();
     }
     if (cmd == 55) {
-      float turn = (float)ua0.ReadI16() * 0.25;
-      float forew = (float)ua0.ReadI16() * 0.8;
+      float turn = (float)ua0.ReadI16() * 0.5;
+      float forew = (float)ua0.ReadI16() * 2.0;
       limL.in = -forew + turn;
       limR.in = -forew - turn;
       // ua0.SvMessage("stk");
@@ -119,11 +119,11 @@ void DoDisplay()
 {
   if (ua0.acqON) {
     LockOStream();
-    ua0.WriteSvI16(1, encL.getFrequF());
-    ua0.WriteSvI16(2, encL.getFrequ());
+    ua0.WriteSvF(1, encL.getFrequF());
+    ua0.WriteSvF(2, encL.getFrequ());
     ua0.WriteSvI16(3, kalm.complAngle);
-    ua0.WriteSvI16(4, motL.pow*100); // +- 100
-    ua0.WriteSvI16(5, limL.out*0.1); // +- 100
+    // ua0.WriteSvI16(4, motL.pow*100); // +- 100
+    // ua0.WriteSvI16(5, limL.out*0.1); // +- 100
     ua0.Flush();
     UnlockOStream();
   }
