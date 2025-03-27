@@ -27,7 +27,7 @@ absolut stabil werden.
 
 26.03 added 2-Chan Encoder SW  LibVers: V1.5
 
-28.03 SegWay update auf 2-Chan Encoder
+27.03 SegWay update auf 2-Chan Encoder
 
 
 
