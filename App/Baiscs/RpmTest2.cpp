@@ -14,10 +14,10 @@ const int M2A = 19, M1A = 23, M2B = 36, M1B = 39;
 Motor motL(PWA, AI1, -1); // -1==Tumbler Motor
 Motor motR(PWB, BI1, -1);
 GpIoOut stdby(ST_BY);
-// Encoder encL(M2A, -1, &motL), encR(M1A, -1, &motR);
-Encoder encL(M2A, M2B, &motL), encR(M1A, M1B, &motR);
+// Encoder encL(M2A, -1, &motL), encR(M1A, -1, &motR); 1-Chan Encoder
+Encoder encL(M2A, M2B, &motL), encR(M1A, M1B, &motR); // 2-Chan Encoder
 
-RateLim limL(1000), limR(1000);
+RateLim limL(200), limR(200);
 
 // 160 1100
 
@@ -81,14 +81,14 @@ void DoDisp()
     if (dispMode == 2) {
       enc = &encR; lim = &limR;
     } 
-    if (dispMode<3) {
+    if (dispMode<3) { // 1,2
       ua0.WriteSvI16(1, enc->getFrequ());
-      // ua0.WriteSvI16(2, enc->getFrequF());
-      ua0.WriteSvI16(2, lim->out); // power
+      ua0.WriteSvI16(2, enc->getFrequF());
+      ua0.WriteSvI16(3, lim->out); // power
     }
     else if (dispMode == 3) { // 3
-      ua0.WriteSvI16(1, encL.getFrequ());
-      ua0.WriteSvI16(2, encR.getFrequ());
+      ua0.WriteSvI16(1, encL.getFrequF());
+      ua0.WriteSvI16(2, encR.getFrequF());
       ua0.WriteSvI16(3, limL.out);
     }
     else { // 4
@@ -104,19 +104,19 @@ extern "C" void RtTask(void* arg)
   stw.val(); stw.Reset();
   limL.CalcOneStep(); limR.CalcOneStep();
   motL.setPow2(limL.out / 1000); motR.setPow2(limR.out / 1000);
-  /* encL.CalcFilt(); encR.CalcFilt();
-  encL.CalcDiff(encL.getFrequF()); 
-  encR.CalcDiff(encR.getFrequF()); */
+  encL.CalcFilt2(); encR.CalcFilt2();
+  encL.CalcDiff(encL.getFrequF());
+  encR.CalcDiff(encR.getFrequF());
   DoDisp();
 }
 
 
 extern "C" void app_main(void)
 {
-  printf("RpmTest2_1\n");
+  printf("RpmTest2_3\n");
   InitRtEnvHL(); 
   InitIO();
-  MyDelay(100); InitUart(UART_NUM_0, 500000); MyDelay(100); // 115200
+  MyDelay(100); InitUart(UART_NUM_2, 115200); MyDelay(100); // 115200
   // xTaskCreate(Monitor, "Monitor", 2048, NULL, 10, NULL);
   EspTimSetup(300, RtTask, false);
   CommandLoop();
