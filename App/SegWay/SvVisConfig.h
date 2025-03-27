@@ -4,6 +4,7 @@
 Com:  COM5 115200
 
 // Kanal Namen
+// Kleinere differnzen zum SegWay.cpp bitte selber anpassen
 ChannelNames:
 	filt
 	frequ
