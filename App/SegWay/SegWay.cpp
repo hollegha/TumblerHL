@@ -10,7 +10,7 @@
 
 SvProtocol2 ua0;
 
-float angleOffs = 0.0;
+float angleOffs = 10.0;
 
 // KP KD KI KS
 BalanceController balC(2E-2, 4E-4, 0, 3E-3, "BalC");
@@ -87,7 +87,8 @@ void CommandLoop()
 extern "C" void RPM_Task(void* arg)
 {
   limL.CalcOneStep(); limR.CalcOneStep();
-  encL.CalcFilt2(); encR.CalcFilt2();
+  // encL.CalcFilt2(); encR.CalcFilt2(); 2-chan Encoder
+  encL.CalcFilt(); encR.CalcFilt(); // 1-chan Encoder
   DoDisplay();
 }
 
@@ -136,7 +137,7 @@ extern "C" void app_main(void)
   InitRtEnvHL(); printf("after InitRT\n");
   I2cInit(); printf("Conn: %X\n", mpu.testConnection()); mpu.Init();
   InitIO();
-  MyDelay(100); InitUart(UART_NUM_2, 115200); MyDelay(100);
+  MyDelay(100); InitUart(UART_NUM_0, 500000); MyDelay(100);
   // configMAX_PRIORITIES = 25
   EspTimSetup(300, RPM_Task, false);
   EspTimSetup(1000, RglTask, false);

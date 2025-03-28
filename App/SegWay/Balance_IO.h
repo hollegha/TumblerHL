@@ -15,8 +15,8 @@ const int M2A = 19, M1A = 23, M2B = 36, M1B = 39;
 Motor motL(PWA, AI1, -1); // -1==Tumbler Motor
 Motor motR(PWB, BI1, -1);
 GpIoOut stdby(ST_BY);
-// Encoder encL(M2A, -1, &motL), encR(M1A, -1, &motR);
-Encoder encL(M2A, M2B, &motL), encR(M1A, M1B, &motR); // 2-Chan Encoder
+Encoder encL(M2A, -1, &motL), encR(M1A, -1, &motR); // 1-Chan Encoder
+// Encoder encL(M2A, M2B, &motL), encR(M1A, M1B, &motR); // 2-Chan Encoder
 
 RateLim limL(1000), limR(1000);
 
