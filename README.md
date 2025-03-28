@@ -27,6 +27,9 @@ absolut stabil werden.
 27.03 SegWay update auf 2-Chan Encoder  
 27.03 Neues Video Using_SvVis.avi
 
+!!!!!! SegWay Bugfix !!!!!!!  
+siehe Videos !!
+
 
 
 
