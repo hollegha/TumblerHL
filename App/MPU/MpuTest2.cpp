@@ -4,11 +4,11 @@
 #include "RTEnvHL.h"
 #include "SvProtocol2.h"
 #include "MPU_Esp.h"
-#include "ImuChan.h"
+#include "ImuAlgo.h"
 
 SvProtocol2 ua0;
 MPU6050 mpu;
-ImuChan chAcc(mpu.acc);
+ImuChan chAcc(mpu.acc, 1);
 int dispMode = 1;
 
 void CommandLoop()
@@ -38,9 +38,9 @@ void DispAcc()
 {
   mpu.getAccel(); chAcc.CalcFilt();
   ua0.WriteSvI16(1, chAcc.getVal(0));
-  ua0.WriteSvI16(2, chAcc.getFilt(0));
+  ua0.WriteSvI16(2, chAcc.getFilt1(0));
   ua0.WriteSvI16(3, chAcc.getVal(1));
-  ua0.WriteSvI16(4, chAcc.getFilt(1));
+  ua0.WriteSvI16(4, chAcc.getFilt1(1));
 }
 
 void DispGyro()
@@ -68,7 +68,7 @@ extern "C" void Monitor(void* arg)
 extern "C" void app_main(void)
 {
   printf("MpuTest2_7\n");
-  InitRtEnvHL(); printf("after InitRT\n");
+  InitRtEnvHL(); 
   I2cInit(); printf("Conn: %X\n", mpu.testConnection()); mpu.Init();
   MyDelay(100); InitUart(0, 500000); MyDelay(100);
   xTaskCreate(Monitor, "Monitor", 2048, NULL, 10, NULL);
