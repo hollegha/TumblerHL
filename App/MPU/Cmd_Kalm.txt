@@ -1,14 +1,5 @@
 
-DispAcc  2 1
-DispGyro 2 2
-DispKalm 2 3
-
 Reset 5
-
-Alpha 3 0.1
-
-DT 4
-
 Cal 6
 
 
