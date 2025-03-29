@@ -10,7 +10,7 @@ MPU6050 mpu;
 ImuChan imuAcc(mpu.acc, 1);
 ImuChan imuGyro(mpu.gyro, 2);
 KalmSimple kalm;
-int dispMode=1; 
+int dispMode=3; 
 StopWatch stw;
 bool calFlag = false;
 
@@ -103,7 +103,7 @@ void SetDispMode()
 extern "C" void app_main(void)
 {
   printf("KalmTest1_3\n");
-  InitRtEnvHL(); printf("after InitRT\n");
+  InitRtEnvHL(); 
   I2cInit(); printf("Conn: %X\n", mpu.testConnection()); mpu.Init();
   MyDelay(100); InitUart(UART_NUM_0, 500000); MyDelay(100);
   // configMAX_PRIORITIES = 25
