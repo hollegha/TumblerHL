@@ -8,3 +8,9 @@ Angabe für Trapetz-Geschwindigkeits-Profil am PC mit Grafik
 
 Profile1_PC_Loesung.py  
 Loesung für Trapetz-Geschwindigkeits-Profil am PC mit Grafik
+
+DistDrive2_Angabe.py ( und Loesung )  
+Beschleunigen und bremsen mit RateLimmiter => unexakte End-Distanz
+
+Profile_uC_Angabe.py  ( und Loesung )  
+Echtes Trapetzförmiges Geschwindigkeits-Profil mit exaktem Stehenbleiben
