@@ -14,3 +14,8 @@ Beschleunigen und bremsen mit RateLimmiter => unexakte End-Distanz
 
 Profile_uC_Angabe.py  ( und Loesung )  
 Echtes Trapetzförmiges Geschwindigkeits-Profil mit exaktem Stehenbleiben
+
+CurveProfile2.py  
+Exaktes Kurven fahren
+
+
