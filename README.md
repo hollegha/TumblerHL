@@ -30,6 +30,8 @@ absolut stabil werden.
 !!!!!! SegWay Bugfix !!!!!!!  
 siehe Videos !!
 
+09.04  SvVis JoyStick Buglix
+
 
 
 
