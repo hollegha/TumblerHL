@@ -15,7 +15,9 @@ MPU .... I2C fuer MPU6050
 
 BTN ..... Ein Button
 
-
+#### Der LineSensor
+https://www.pololu.com/product/4211  
+Der Clou bei diesem Sensor ist, daß
 
 
 
