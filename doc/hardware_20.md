@@ -1,4 +1,5 @@
 
 ### Tumbler Connections 2.0
 #### Pin Bezeichnungen  
-MIA M1B ..... Encoder Motor1
+M1A M1B ..... Encoder Motor1  
+M2A M2B ..... Encoder Motor2
