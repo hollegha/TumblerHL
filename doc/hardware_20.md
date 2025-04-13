@@ -11,6 +11,12 @@ BIN1,BIN2 ..... L/R/stby Motor2
 LS1..LS6 ...... LineSensor ADC-Kanal  
 LSC1,LSC2.....LineSensor LED-Control
 
+MPU .... I2C fuer MPU6050
+
+BTN ..... Ein Button
+
+
+
 
 
 
