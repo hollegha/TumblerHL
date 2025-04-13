@@ -17,7 +17,13 @@ BTN ..... Ein Button
 
 #### Der LineSensor
 https://www.pololu.com/product/4211  
-Der Clou bei diesem Sensor ist, daß
+Der Clou bei diesem Sensor ist,  
+daß man 11-Linesensor Kanäle zum Preiß von 6-ADC Kanälen erhält
+
+Tumbler_Conn_ESP.xlsx  
+Belegung der ESP IO's
+
+
 
 
 
