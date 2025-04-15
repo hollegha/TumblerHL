@@ -33,6 +33,11 @@ siehe Videos !!
 
 09.04  SvVis JoyStick Buglix V7.6
 
+15.04  App\LineSensor  
+LineSensor Testcode zum Austesten verschiedener Linesensor-Konfigurationen  
+( mechanisch und elektronisch )
+
+
 
 
 
