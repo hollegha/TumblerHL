@@ -13,8 +13,8 @@ public:
   void CalcFilt();
   void CalcFilt(int idx);
   int getVal(int idx);
-  float getFilt1(int idx);
-  float getFilt2(int idx);
+  float getFilt1(int idx); // Tp1Ord
+  float getFilt2(int idx); // Tp2Ord
   void SetAlpha(float aAlpha);
   void CalGyro();
 private:

@@ -101,6 +101,8 @@ private:
   adc_channel_t _ch;
   static adc_oneshot_unit_handle_t _unit2;
 public:
+  static adc_atten_t atten;
+public:
   Adc2(adc_channel_t aChan)
   {
     _ch = aChan;
@@ -118,6 +120,8 @@ class Adc1 {
 private:
   adc_channel_t _ch;
   static adc_oneshot_unit_handle_t _unit1;
+public:
+  static adc_atten_t atten;
 public:
   Adc1(adc_channel_t aChan)
   {
