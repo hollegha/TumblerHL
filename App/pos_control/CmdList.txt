@@ -1,0 +1,19 @@
+
+SetPos 2 0 0
+SetPos 2 100 100
+SetPos 2 200 200
+SetPos 2 300 -300
+SetPos 2 -300 300
+
+
+RglON  5 1
+RglOFF 5 0
+
+RateOFF 6 0
+Rate 6 20
+Rate 6 50
+Rate 6 100
+Rate 6 200
+
+ResCnt 4
+
