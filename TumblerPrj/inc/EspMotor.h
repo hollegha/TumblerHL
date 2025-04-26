@@ -172,7 +172,8 @@ public:
 
 
 class RateLim {
-  const float F_SAMPLE = 300.0;
+public:
+  float F_SAMPLE;
 public:
   float inTmp;
   float in, out;
@@ -181,6 +182,7 @@ public:
 public:
   RateLim(float aRate)
   {
+    F_SAMPLE = 300.0;
     in = out = 0; on = 1; SetRateSec(aRate);
   }
   void SaveIn()
@@ -237,7 +239,7 @@ public:
       out -= _rate;
     }
   }
-private:
+public:
   float _rate;
 };
 

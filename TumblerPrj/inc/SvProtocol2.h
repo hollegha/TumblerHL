@@ -13,9 +13,6 @@ void InitRtEnvHL();
 
 void InitUart(uart_port_t uaNum, int aBaud);
 
-// void WriteIO(void* aData, size_t aLen);
-// int ReadIO(void* aBuff, uint32_t aLen);
-
 class SvProtocol2 {
 private:
   static const int BUFF_SZ = 100;
@@ -31,6 +28,12 @@ public:
     idx = acqON = 0;
     resetFlag = 1; tcpErr = 2;
   }
+
+  static void Init();
+
+  void LockOStream();
+
+  void UnlockOStream();
 
   void WriteIO(void* aData, size_t aLen);
 
