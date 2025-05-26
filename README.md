@@ -37,18 +37,21 @@ siehe Videos !!
 LineSensor Testcode zum Austesten verschiedener Linesensor-Konfigurationen  
 ( mechanisch und elektronisch )
 
-### Balancing-Tumbler Uebungen  
+### Balancing-Tumbler Labs 
 Simple Kallman Filter  
 Balance only  
 Segway  
-Position Control
-Disatnce Sensor
+Position Control  
+Distance Sensor  
 Avoid Obstacles
 
-
-
-
-
-
-
+### Turtle-Tumbler Labs
+Speed-Control  
+Position-Control  
+Servo-Control  
+Trapetz Speed-Profile  
+Curve Kinematics  
+Odometer Measurements  
+LineSensor Driver  
+PID Line-Controller
 
