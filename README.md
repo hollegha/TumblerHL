@@ -37,7 +37,16 @@ siehe Videos !!
 LineSensor Testcode zum Austesten verschiedener Linesensor-Konfigurationen  
 ( mechanisch und elektronisch )
 
-# Balancing-Tumbler bungen
+### Balancing-Tumbler Uebungen  
+Simple Kallman Filter  
+Balance only  
+Segway  
+Position Control
+Disatnce Sensor
+Avoid Obstacles
+
+
+
 
 
 
