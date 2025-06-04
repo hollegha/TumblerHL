@@ -53,5 +53,6 @@ Trapetz Speed-Profile
 Curve Kinematics  
 Odometer Measurements  
 LineSensor Driver  
-PID Line-Controller
+PID Line-Controller  
+Labyrinth Solving
 
