@@ -17,9 +17,9 @@ void Foreward(float pow, int dist)
 
 void Backward(float pow, int dist)
 {
-  encR.cnt = encL.cnt = dist;
+  encR.cnt = encL.cnt = 0;
   motR.setPow2(-pow); motL.setPow2(-pow);
-  while( (int)encR.cnt>0 )
+  while( (int)encR.cnt>-dist)
     vTaskDelay(1);
   motR.setPow2(0); motL.setPow2(0);
 }
@@ -28,6 +28,8 @@ void PingPong()
 {
   while (1) {
     Foreward(0.2, 200);
+    MyDelay(300);
+    Backward(0.2, 200);
     MyDelay(300);
   }
 }
