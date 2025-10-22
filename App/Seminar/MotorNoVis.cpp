@@ -5,6 +5,7 @@
 #include "driver/gpio.h"
 #include "MotorSetup.h"
 
+// GpIoIn btn(17);
 
 void Foreward(float pow, int dist)
 {
@@ -26,6 +27,10 @@ void Backward(float pow, int dist)
 
 void PingPong()
 {
+  // wait until btn pressed
+  // while( btn.get()!=1 )
+    // MyDelay(10); // msec
+
   while (1) {
     Foreward(0.2, 200);
     MyDelay(300);
@@ -37,7 +42,7 @@ void PingPong()
 extern "C" void app_main(void)
 {
   printf("MotorNoVis\n");
-  InitRtEnvHL(); 
+  InitRtEnvHL(); // btn.Init();
   InitIO();
   PingPong();
 }
