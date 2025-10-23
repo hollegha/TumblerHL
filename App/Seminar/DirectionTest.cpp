@@ -5,6 +5,8 @@
 #include "driver/gpio.h"
 #include "MotorSetup.h"
 
+// Code on github
+
 SvProtocol2 ua0;
 
 void CommandLoop()
@@ -48,3 +50,4 @@ extern "C" void app_main(void)
   xTaskCreate(Monitor, "Monitor", 2048, NULL, 10, NULL); 
   CommandLoop();
 }
+
