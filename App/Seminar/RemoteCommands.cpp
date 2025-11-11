@@ -1,11 +1,11 @@
 
 #include "RTEnvHL.h"
-#include "SvProtocol2.h"
+#include "SvProtocol3.h"
 #include "EspMotor.h"
 #include "driver/gpio.h"
 #include "MotorSetup.h"
 
-SvProtocol2 ua0;
+SvProtocol3 ua0;
 int remCommand = 0;
 
 void CommandLoop()
@@ -79,10 +79,11 @@ extern "C" void Monitor(void* arg)
 
 extern "C" void app_main(void)
 {
-  printf("Remote commands\n");
+  printf("Rt5 Remote commands\n");
   InitRtEnvHL(); 
   InitIO();
-  MyDelay(100); InitUart(UART_NUM_0, 500000); MyDelay(100); 
+  // MyDelay(100); InitUart(UART_NUM_0, 500000); MyDelay(100);
+  InitSoftAp("sepp", 1);
   xTaskCreate(Monitor, "Monitor", 2048, NULL, 10, NULL);
   xTaskCreate(DriveTask, "Drv", 2048, NULL, 10, NULL);
   CommandLoop();
