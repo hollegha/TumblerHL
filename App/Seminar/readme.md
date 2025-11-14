@@ -1,1 +1,1 @@
-# Seminar
+# Seminar mit SvVis
