@@ -77,23 +77,24 @@ void SetPw(PwmHL pwm, uint32_t width)
 }
 
 
-void GpIoInitInterrupt(int aPinNum, gpio_isr_t aISR, void* aParam)
+void GpIoInitInterrupt(int aPinNum, gpio_isr_t aISR, void* aParam,
+  gpio_int_type_t aEdge)
 {
-	static bool isInstalled = false;
+  static bool isInstalled = false;
   const gpio_config_t conf = {
     .pin_bit_mask = (1ULL << aPinNum),
     .mode = GPIO_MODE_INPUT,
     .pull_up_en = 1,
     .pull_down_en = 0,
-    .intr_type = GPIO_INTR_POSEDGE,
+    .intr_type = aEdge,
   };
   ESP_ERROR_CHECK(gpio_config(&conf));
   // gpio_set_intr_type(aPinNum, GPIO_INTR_POSEDGE);
 
   // ESP_INTR_FLAG_DEFAULT=0; ESP_INTR_FLAG_LEVEL1....
-  if( !isInstalled ) {
-  	gpio_install_isr_service(0); // nur 1x aufrufen
-  	isInstalled=true;
+  if (!isInstalled) {
+    gpio_install_isr_service(0); // nur 1x aufrufen
+    isInstalled = true;
   }
 
   gpio_isr_handler_add(aPinNum, aISR, aParam);

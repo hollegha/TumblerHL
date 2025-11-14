@@ -45,13 +45,14 @@ class Motor {
 public:
   float pow;
   float dir;
+  bool  inv;
 public:
   static void InitTimer();
   static void StartTimer();
   Motor(int aPwm, int aFwd, int aRev=-1)
   {
     _pwm = aPwm; _fwd = aFwd; _rev = aRev;
-    pow = 0; dir = 0;
+    pow = 0; dir = 0; inv = false;
   }
   void Init();
   void setPow(float aPow)
@@ -78,16 +79,29 @@ public:
     if (aPow < -0.9) aPow = -0.9;
     pow = aPow;
     if (aPow >= 0) {
-      gpio_set_level((gpio_num_t)_fwd, 0);
+      setDirPin(false);
     }
     else {
       aPow = -aPow;
-      gpio_set_level((gpio_num_t)_fwd, 1);
+      setDirPin(true);
     }
     SetPwPercent(hpwm, aPow);
     if (pow > 0) dir = 1.0;
     else if (pow < 0) dir = -1.0;
     else dir = 0.0;
+  }
+  void setDirPin(bool dir)
+  {
+    if (dir)
+      if (!inv)
+        gpio_set_level((gpio_num_t)_fwd, 1);
+      else
+        gpio_set_level((gpio_num_t)_fwd, 0);
+    else
+      if (!inv)
+        gpio_set_level((gpio_num_t)_fwd, 0);
+      else
+        gpio_set_level((gpio_num_t)_fwd, 1);
   }
 private:
   int _pwm, _fwd, _rev;

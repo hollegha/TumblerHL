@@ -54,8 +54,9 @@ inline void GpTimSetFrequ(gptimer_handle_t aTim, uint64_t aPeriod)
 esp_timer_handle_t EspTimSetup(int aFrequ, esp_timer_cb_t aCB, bool useISR);
 
 
-
-void GpIoInitInterrupt(int aPinNum, gpio_isr_t aISR, void* aParam);
+// GPIO_INTR_POSEDGE NEGEDGE ANYEDGE
+void GpIoInitInterrupt(int aPinNum, gpio_isr_t aISR, void* aParam,
+  gpio_int_type_t aEdge);
 
 void GpIoInitForISR(int aPinNum);
 
