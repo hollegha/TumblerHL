@@ -1,6 +1,7 @@
 
 #include "RoboLib7.h"
 #include "EspMotor.h"
+#include "MPU_Esp.h"
 
 /*---------------------------------------------------
 * 
@@ -20,6 +21,8 @@ UsDist ds(14, 27);
 
 Adc1 ls1(ADC_CHANNEL_0), ls2(ADC_CHANNEL_3);
 
+MPU6050 mpu;
+
 extern "C" void app_main(void)
 {
   printf("MotTest\n");
@@ -31,6 +34,10 @@ extern "C" void app_main(void)
 
   Adc1::atten = ADC_ATTEN_DB_11;
   ls1.Init(); ls2.Init();
+
+  // Init MPU
+  I2cInit(); printf("Conn: %X\n", mpu.testConnection()); 
+  mpu.Init();
   
   /* motR.setPow2(0.2); motL.setPow2(0.3);
   MyDelay(2000);
