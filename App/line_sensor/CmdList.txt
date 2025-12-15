@@ -1,0 +1,26 @@
+
+dispRaw     3 1
+calibration 3 2
+dispcal     3 3
+dispENC     3 5
+
+resetENC 12
+
+showCal 4
+Init_cal 5
+
+rgl_on  7 1
+rgl_off 7 0
+
+forew    10  0.3
+NOforew  10  0.0
+
+stbyON  11 1
+stbyOFF 11 0
+
+// !!DriveTask only!!
+follow   9 1 0.2
+Turn     9 3 0.2
+autoCal  9 2 0.1
+STOP     9 -1 
+
