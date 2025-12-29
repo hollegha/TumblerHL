@@ -52,7 +52,7 @@ static int cols[] = { H_RED, H_RED, H_YELLOW2, H_GREEN2, H_BLUE };
 void showLED()
 {
   leds.setHueFT(0, 1, cols[mSel]);
-  leds.refresh(); MyDelay(1200);
+  leds.refresh(); 
 }
 
 void blinkLED()
@@ -71,7 +71,7 @@ int execMenue()
   mSel = 1;
   while (1) {
     hbtn.listen();
-    showLED();
+    showLED(); MyDelay(1200);
     if (hbtn.wasClicked())
       goto SelDone;
     mSel++;
@@ -83,6 +83,23 @@ SelDone:
 }
 
 
+int execMenueDBL()
+{
+  leds.clear();
+  mSel = 1;
+  while (1) {
+    showLED();
+    hbtn.cnt=0; hbtn.wait();
+    MyDelay(500);
+    if (hbtn.cnt > 100)
+      goto SelDone;
+    mSel++;
+    if (mSel > 4) mSel = 1;
+  }
+SelDone:
+  blinkLED(); leds.clear();
+  return mSel;
+}
 
 
 

@@ -9,7 +9,14 @@
 // !!! dont declare them elesewhere !!!
 
 void InitTmbMenue();
+
+// Menue points are switched by time
+// 1-click selects
 int execMenue();
+
+// Menue points are switched by single click
+// double-click selects
+int execMenueDBL();
 
 class ButtonHandler {
 private:
