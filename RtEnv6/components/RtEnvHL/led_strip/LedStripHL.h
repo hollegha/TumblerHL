@@ -31,16 +31,17 @@ public:
     led_strip_set_pixel_hsv(_ls, i, aHue, sat, val);
   }
 
+  void setHueFT(int from, int to, uint16_t aHue)
+  {
+    for (int i = from; i <= to; i++)
+      setHue(i, aHue);
+  }
+
   void setRGB(int i, int r, int g, int b)
   {
     led_strip_set_pixel(_ls, i, r, g, b);
   }
-
-  void setRGBW(int i, int r, int g, int b, int w)
-  {
-    led_strip_set_pixel_rgbw(_ls, i, r, g, b, w);
-  }
-
+  
   void refresh()
   {
     led_strip_refresh(_ls);
