@@ -3,17 +3,15 @@
 #include "SvProtocol3.h"
 #include "EspMotor.h"
 #include "LineController.h"
+#include "TmbMenues.h"
 #include "MotorSetup.h"
 
-extern LineSensor ls;
+extern LsPololu ls;
 extern LinePID lpd;
 SvProtocol3 ua0;
 
-// #define CHECK_CANCEL() if( drCmd.doCancel() ) goto StopAll
-// #define CHECK_CANCEL2() if( drCmd.doCancel() ) return
-
-#define CHECK_CANCEL() if( btn.get() ) goto StopAll
-#define CHECK_CANCEL2() if( btn.get() ) return
+#define CHECK_CANCEL() if( hbtn.check() || drCmd.doCancel() ) goto StopAll
+#define CHECK_CANCEL2() if( hbtn.check() || drCmd.doCancel() ) return
 
 
 void RotStep(float pow)
@@ -24,19 +22,21 @@ void RotStep(float pow)
   MyDelay(200);
 }
 
+
+// RawVals !! this is calibration !!
 void Turn2EndOfSensor(float pow)
 {
   // ua0.SvPrintf("TTE %1.2f", pow);
   int idx = 0;
   if (pow > 0) idx = 5;
-  while( lsAry[idx].rawVal < 2000 ) {
+  while( ls.rawVal(idx) < 1000 ) {
     RotStep(pow);
     CHECK_CANCEL();
   }
   MyDelay(300);
   encL.cnt = encR.cnt = 0;
   motL.setPow2(-pow); motR.setPow2(pow);
-  while (encL.absCnt() < 20) {
+  while (encL.absCnt() < 40) {
     CHECK_CANCEL();
     vTaskDelay(1);
   }
@@ -61,7 +61,7 @@ void AutoCal(float pow)
 bool CkeckEOL()
 {
   if (ls.allZero()) {
-    vTaskDelay(1);
+    MyDelay(500);
     if (ls.allZero())
       return true;
   }
@@ -77,13 +77,16 @@ bool CkeckEOL()
   return false; */
 }
 
-void DriveUntilLost()
+void DriveUntilLost(float pow)
 {
+  lpd.forew = pow;
   lpd.onOff(1);
   while (1) {
     vTaskDelay(1);
     CHECK_CANCEL();
     if( CkeckEOL() )
+      break;
+    if (!ls.floorVisible())
       break;
   }
 StopAll:
@@ -96,7 +99,7 @@ void TurnUntilLine(float pow)
 {
   lpd.onOff(0);
   motL.setPow2(-pow); motR.setPow2(pow);
-  while (lsAry[2].y < 1000 && lsAry[3].y < 1000) {
+  while (ls.Y(2) < 1000 && ls.Y(3) < 1000) {
     vTaskDelay(1);
     CHECK_CANCEL();
   }
@@ -111,9 +114,9 @@ extern "C" void DriveControl(void* arg)
   while (1) {
     cmd = drCmd.recv();
     if (cmd == 1) {
-      lpd.forew=ua0.ReadF(); 
+      float pow=ua0.ReadF();
       ua0.SvMessage("DrFL");
-      DriveUntilLost(); ua0.SvMessage("End Drv");
+      DriveUntilLost(pow); ua0.SvMessage("End Drv");
     }
     else if (cmd == 2) {
       float pow=ua0.ReadF(); 
@@ -131,27 +134,33 @@ extern "C" void DriveControl(void* arg)
 }
 
 
-void BtnDriveControl()
+void MenueDriveControl()
 {
+  int sel = 0;
   while (1) {
-    while (!btn.get())
-      MyDelay(100);
-    MyDelay(500); // Btn release
-    lpd.forew = 0.2;
-    DriveUntilLost();
-    MyDelay(500); // Btn release
+    sel = execMenueDBL();
+    // ua0.SvPrintf("sel %d working...", sel);
+    if (sel == 1)
+      AutoCal(0.1);
+    if (sel == 2)
+      DriveUntilLost(0.2);
   }
 }
+
 
 extern "C" void app_main(void)
 {
 	printf("LineDemo1_3\n");
   InitRtEnvHL();
-  InitMotors(); InitLineControler();
+  InitMotors(); 
   // InitUart(UART_NUM_0, 500000);
-  InitSoftAp("sepp", 6);
+  InitSoftAp("sepp", 5);
+  InitLineControler();
+  // InitTmbMenue();
   // xTaskCreate(DriveControl, "Drc", 2048, NULL, 8, &(drCmd.t_recv));
-  BtnDriveControl();
+  // MenueDriveControl();
+  while (1)
+    MyDelay(10000);
 }
 
 

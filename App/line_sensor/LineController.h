@@ -24,7 +24,7 @@ private:
   float sum;
 };
 
-extern LineSensor ls;
+extern LsPololu ls;
 extern LinePID lpd;
 extern SvProtocol3 ua0;
 extern TTMailBox drCmd;

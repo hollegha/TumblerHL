@@ -4,10 +4,10 @@
 #include "EspMotor.h"
 #include "LineController.h"
 
-LineChannel lsAry[N_LS_CHAN];
-LineSensor ls;
-// 0.7  0.01
-LinePID lpd(0.6, 0.02, 0.0, 0.0, "LinePD");
+
+LsPololu ls;
+// 0.7  0.01 
+LinePID lpd(0.8, 0.0, 0.0, 0.0, "LinePD");
 
 extern Motor motL, motR;
 extern Encoder encL, encR;
@@ -24,7 +24,9 @@ void InitLineControler()
 {
   Adc1::atten = ADC_ATTEN_DB_11;
   ls.initADC();
-  ls.setDefaultCalib();
+  if( ESP_OK!=ls.nvs2cal() ) // ls.setDefaultCalib();
+    ls.initCal();
+  ls.mode = DISP_RAW;
   lpd.onOff(false);
   xTaskCreate(Monitor, "Mon", 2048, NULL, 10, NULL); // 10=Prio
   xTaskCreate(CommandLoop, "Cmd", 2048, NULL, 8, NULL); 
@@ -33,10 +35,11 @@ void InitLineControler()
 void LinePID::calcOneStep()
 {
   const float DT = 0.01;
-  float pos = ls.posNorm();
+  float pos = ls.pos();
   if( KI!=0 )
     sum += pos;
-  out = pos * KP + ls.diffNorm() * KD + sum * KI * DT;
+  out = pos * KP + ls.posDiff() * KD + sum * KI * DT;
+  out = -out; // ls-back
 }
 
 void setDispMode(int mode)
@@ -105,6 +108,14 @@ extern "C" void CommandLoop(void* arg)
     else if (cmd == 12) { // reset ENC
       encL.cnt = encR.cnt = 0;
     }
+    else if (cmd == 13) { // cal2NVS
+      ls.cal2nvs();
+      ua0.SvMessage("cal -> NVS");
+    }
+    else if (cmd == 14) { 
+      ls.nvs2cal();
+      ua0.SvMessage("NVS -> cal");
+    }
     else if (cmd == 200 || cmd == 201)
       ControlParams(cmd);
     else if (cmd == 50) {
@@ -144,8 +155,8 @@ void Display()
   }
   else if (ls.mode == CAL_VALS) {
     ls.dispYVals(&ua0);
-    ua0.WriteSvI16(7, 1000 * ls.posNorm());
-    ua0.WriteSvI16(8, 1000 * ls.diffNorm());
+    ua0.WriteSvI16(7, ls._pos);
+    ua0.WriteSvI16(8, ls._posDiff);
   }
   else if (ls.mode == ENCODERS) {
     ua0.WriteSvI16(1, (int)encL.cnt);
@@ -173,9 +184,14 @@ void ExecLineSensor()
   }
   else if (ls.mode == CAL_VALS) {
     ls.calcCal();
-    ls.calcPos3();
+    ls.calcPos();
   }
   if (lpd.on) {
+    /* if (!ls.posInRange()) {
+      lpd.onOff(false);
+      motL.setPow2(0); motR.setPow2(0);
+      return;
+    } */
     lpd.calcOneStep();
     if (lpd.forew != 0) {
       motL.setPow2(rg.Clip(lpd.forew + lpd.out));

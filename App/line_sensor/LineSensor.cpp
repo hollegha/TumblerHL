@@ -2,104 +2,155 @@
 #include "RTEnvHL.h"
 #include "SvProtocol3.h"
 #include "LineSensor.h"
+#include "NodeLock.h"
+#include "esp_system.h"
+#include "nvs_flash.h"
+#include "nvs.h"
+
+extern nvs_handle_t nvsRtEnv; 
 
 
-void LineSensor::initADC()
+void LineSensor::cal2nvs()
 {
-  /* lsAry[0].adc._ch = ADC_CHANNEL_0;
-  lsAry[1].adc._ch = ADC_CHANNEL_3;
-  lsAry[2].adc._ch = ADC_CHANNEL_6;
-  lsAry[3].adc._ch = ADC_CHANNEL_7;
-  lsAry[4].adc._ch = ADC_CHANNEL_4;
-  lsAry[5].adc._ch = ADC_CHANNEL_5; */
-  lsAry[0].adc._ch = ADC_CHANNEL_0;
+  int calBlob[12];
+  int j = 0;
+  for (int i = 0; i < 6; i++) {
+    calBlob[j] = lsAry[i]._max; j++;
+    calBlob[j] = lsAry[i]._min; j++;
+  }
+  openRtEnvStore();
+  ESP_ERROR_CHECK(nvs_set_blob(nvsRtEnv, "ls", calBlob, 4*12));
+  ESP_ERROR_CHECK(nvs_commit(nvsRtEnv));
+  closeRtEnvStore();
+}
+
+int LineSensor::nvs2cal()
+{
+  int calBlob[12];
+  size_t len; int ret = 0;
+  openRtEnvStore();
+  ret = nvs_get_blob(nvsRtEnv, "ls", calBlob, &len);
+  closeRtEnvStore();
+  if (ret != ESP_OK)
+    return ret;
+  int j = 0;
+  for (int i = 0; i < 6; i++) {
+    lsAry[i]._max = calBlob[j]; j++;
+    lsAry[i]._min = calBlob[j]; j++;
+    lsAry[i].cal2_kd();
+  }
+  return ESP_OK;
+}
+
+
+void LsPololu::initADC()
+{
+  printf("LsPolo N:%d\n", N_LS_CHAN);
+  // Sesor in front
+  /**lsAry[0].adc._ch = ADC_CHANNEL_0;
   lsAry[1].adc._ch = ADC_CHANNEL_3;
   lsAry[2].adc._ch = ADC_CHANNEL_4;
   lsAry[3].adc._ch = ADC_CHANNEL_5;
   lsAry[4].adc._ch = ADC_CHANNEL_6;
-  lsAry[5].adc._ch = ADC_CHANNEL_7;
+  lsAry[5].adc._ch = ADC_CHANNEL_7;*/
+  // Sensor back
+  lsAry[0].adc._ch = ADC_CHANNEL_7;
+  lsAry[1].adc._ch = ADC_CHANNEL_6;
+  lsAry[2].adc._ch = ADC_CHANNEL_5;
+  lsAry[3].adc._ch = ADC_CHANNEL_4;
+  lsAry[4].adc._ch = ADC_CHANNEL_3;
+  lsAry[5].adc._ch = ADC_CHANNEL_0;
   for (int i = 0; i < N_LS_CHAN; i++) {
     lsAry[i].adc.Init();
   }
 }
 
-void LineSensor::setDefaultCalib()
+void LsBertl::initADC()
 {
-  setCal(0, 64, 2770);
-  setCal(1, 52, 2070);
-  setCal(2, 48, 1862);
-  setCal(3, 51, 2260);
-  setCal(4, 45, 2044);
-  setCal(5, 59, 2713);
+  printf("LsB N:%d\n", N_LS_CHAN);
+  lsAry[0].adc._ch = ADC_CHANNEL_6;
+  lsAry[1].adc._ch = ADC_CHANNEL_0;
+  lsAry[2].adc._ch = ADC_CHANNEL_3;
+  lsAry[3].adc._ch = ADC_CHANNEL_7;
+  for (int i = 0; i < N_LS_CHAN; i++) {
+    lsAry[i].adc.Init();
+  }
 }
 
-void LineSensor::calcPos()
+
+void LsPololu::setDefaultCalib()
 {
-  int sum = 0, weight = 0, i;
-  posDiff = 0; // 1000
-  if (lsAry[0].y < 1200 && lsAry[5].y < 1200 && isMidZero()) {
-    return;
-  }
-  for (i = 0; i < N_LS_CHAN; i++)
-    sum += lsAry[i].y;
-  if (sum == 0)
-    sum = 1;
-  for (i = 0; i < N_LS_CHAN; i++)
-    weight += CAL_AMPL * (i + 1) * lsAry[i].y;
-  pos = (weight / sum) - 7000;
+  setCal(0, 32, 3081);
+  setCal(1, 21, 2640);
+  setCal(2, 19, 2437);
+  setCal(3, 24, 2561);
+  setCal(4, 34, 2656);
+  setCal(5, 35, 3211); 
 }
+
+void LsBertl::setDefaultCalib()
+{
+  setCal(0, 25, 3540);
+  setCal(1, 17, 3272);
+  setCal(2, 44, 3607);
+  setCal(3, 32, 3658);
+}
+
+
 
 // tuning of Line-Position
 const int RG_MIN = 20;
-const int RG_MAX = 1700; // 1800 2000
+const int RG_MAX = 1500; // 1800 2000 1700
 
-void LineSensor::calcPos3()
+void LsPololu::calcPos()
 {
   if (lsAry[0].y < 1200 && lsAry[5].y < 1200 && isMidZero()) {
     return;
   }
   if (checkRange(0, 1))
-    pos3 = pos2 - 4 * RG_MAX;
+    _pos = _rgPos - 4 * RG_MAX;
   else if (checkRange(1, 2))
-    pos3 = pos2 - 2 * RG_MAX;
+    _pos = _rgPos - 2 * RG_MAX;
   else if (checkRange(2, 3))
-    pos3 = pos2;
+    _pos = _rgPos;
   else if (checkRange(3, 4))
-    pos3 = pos2 + 2 * RG_MAX;
+    _pos = _rgPos + 2 * RG_MAX;
   else if (checkRange(4, 5))
-    pos3 = pos2 + 4 * RG_MAX;
+    _pos = _rgPos + 4 * RG_MAX;
 
-  tp.CalcOneStep(pos3);
-  posDiff = tp.y - z2;
+  tp.CalcOneStep(_pos);
+  _posDiff = tp.y - z2;
   z2 = z1; z1 = tp.y;
-  posDiff = posDiff * (1.0 / 3.0);
+  _posDiff = _posDiff * (1.0 / 3.0);
 }
 
-bool LineSensor::checkRange(int idxL, int idxR)
+bool LsPololu::checkRange(int idxL, int idxR)
 {
   if (lsAry[idxL].y < RG_MIN && lsAry[idxR].y < RG_MAX)
     return false;
   if (lsAry[idxL].y < RG_MAX && lsAry[idxR].y < RG_MIN)
     return false;
-  pos2 = lsAry[idxR].y - lsAry[idxL].y;
+  _rgPos = lsAry[idxR].y - lsAry[idxL].y;
   return true;
 }
 
 
-// links:0 rechts:5 links:- rechts:+
-void LineSensor::calcPos2()
+void LsBertl::experPos()
 {
-  if (lsAry[2].y < RG_MIN && lsAry[3].y < RG_MAX)
-    goto outOfRange;
-  if (lsAry[2].y < RG_MAX && lsAry[3].y < RG_MIN)
-    goto outOfRange;
-  pos2 = lsAry[3].y - lsAry[2].y;
-  return;
-outOfRange:
-  if (pos2 < 0)
-    pos2 = -CAL_AMPL;
-  else
-    pos2 = CAL_AMPL;
-}
+  const int RG_OFFSET = 2000;
+  const int MID_OFFSET = 1200; // könnte man kalibrieren
+  _pos = 0;
+  if (Y(1) < 50 && Y(2) < 50 && Y(0) < 1800 && Y(3) < 1800)
+    return; // out of Range xxx
+  
+  _pos = Y(1) - Y(0) - 2 * RG_OFFSET;
+  
+  if (Y(2) > 300) 
+    _pos = Y(2) - Y(1);
 
+  if (Y(3) > 300)
+    _pos = Y(3) - Y(2) + 2 * RG_OFFSET;
+
+  _pos -= MID_OFFSET;
+}
 

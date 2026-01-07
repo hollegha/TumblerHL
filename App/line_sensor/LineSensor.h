@@ -2,7 +2,6 @@
 
 #include "Tp1Ord.h"
 
-const int N_LS_CHAN = 6;
 const float CAL_AMPL = 2000.0;
 
 const int DISP_RAW =  1;
@@ -26,6 +25,10 @@ public:
   void initCal()
   {
     _min = 32000; _max = 0; y = 400;
+  }
+  void cal2_kd()
+  {
+    _k = CAL_AMPL / (float)(_max - _min);
   }
   void calcCalibration()
   {
@@ -59,37 +62,34 @@ public:
   Adc1 adc;
 };
 
-extern LineChannel lsAry[N_LS_CHAN];
 
-// 9000 200
 class LineSensor {
 public:
   int mode;
-  int pos, pos2, pos3;
-  float posDiff;
-  Tp1Ord tp;
+  int _pos;
+  float _posDiff;
+protected:
+  int N_LS_CHAN;
+  LineChannel lsAry[6];
 public:
   LineSensor()
   {
+    N_LS_CHAN = 6;
     mode = CAL_VALS;
-    pos = posDiff = z1 = z2 = 0;
-    pos2 = pos3 = 0;
+    _pos = z1 = z2 = 0;
+    _posDiff = 0;
     tp.SetAlpha(0.5);
   }
 
-  float posNorm()
+  float Y(int i)
   {
-    return (float)pos3 * (1.0 / 9000.0);
+    return lsAry[i].y;
   }
 
-  float diffNorm()
+  int rawVal(int i)
   {
-    return posDiff * (1.0 / 200.0);
+    return lsAry[i].rawVal;
   }
-
-  void initADC();
-  
-  void setDefaultCalib();
   
   void readADC()
   {
@@ -121,7 +121,7 @@ public:
     lsAry[idx]._min = aMin; lsAry[idx]._max = aMax;
     lsAry[idx]._k = CAL_AMPL / (float)(aMax - aMin);
   }
-
+  
   void initCal()
   {
     for (int i = 0; i < N_LS_CHAN; i++)
@@ -146,10 +146,40 @@ public:
       lsAry[i].calVal();
   }
 
-  void calcPos();
+  void cal2nvs();
+  int nvs2cal();
 
-  void calcPos2();
-  void calcPos3();
+public:
+  Tp1Ord tp;
+protected:
+  int z1, z2;
+};
+
+
+class LsPololu : public LineSensor {
+private:
+  int _rgPos;
+public:
+  LsPololu() : LineSensor()
+  {
+    N_LS_CHAN = 6; _rgPos = 0;
+  }
+
+  float pos()
+  {
+    return (float)_pos * (1.0 / 8000.0);
+  }
+
+  float posDiff()
+  {
+    return _posDiff * (1.0 / 200.0);
+  }
+
+  void initADC();
+
+  void setDefaultCalib();
+
+  void calcPos();
 
   bool checkRange(int idxL, int idxR);
 
@@ -164,14 +194,43 @@ public:
 
   bool allZero()
   {
-    const float LOW_LEVEL = 50;
+    const float LOW_LEVEL = 60;
     for (int i = 0; i < N_LS_CHAN; i++)
       if (lsAry[i].y > LOW_LEVEL)
         return false;
     return true;
   }
-private:
-  int z1, z2;
+
+  // uses rawVal
+  bool floorVisible()
+  {
+    for (int i = 0; i < N_LS_CHAN; i++)
+      if (lsAry[i].rawVal < 1000)
+        return true;
+    return false;
+  }
+
+  bool posInRange()
+  {
+    if (_pos<6500 && _pos>-6500)
+      return true;
+    return false;
+  }
+};
+
+
+class LsBertl : public LineSensor {
+public:
+  LsBertl() : LineSensor()
+  {
+    N_LS_CHAN = 4;
+  }
+
+  void initADC();
+
+  void setDefaultCalib();
+
+  void experPos(); // experimental Position
 };
 
 
