@@ -1,6 +1,8 @@
 
 #include "LedStripHL.h"
 
+void MyDelay(int aMSec); // from RtEnv
+
 void LedStripHL::Init()
 {
   led_strip_config_t strip_config = {
@@ -23,5 +25,16 @@ void LedStripHL::Init()
   };
   
   ESP_ERROR_CHECK(led_strip_new_rmt_device(&strip_config, &rmt_config, &_ls));
+}
+
+
+void LedStripHL::blink(int from, int to, uint16_t aHue, int aN)
+{
+  for (int i = 0; i < aN; i++) {
+    setHueFT(from, to, aHue); refresh();
+    MyDelay(200);
+    clear();
+    MyDelay(200);
+  }
 }
 

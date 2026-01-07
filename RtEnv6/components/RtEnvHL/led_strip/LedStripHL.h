@@ -37,6 +37,8 @@ public:
       setHue(i, aHue);
   }
 
+  void blink(int from, int to, uint16_t aHue, int aN);
+
   void setRGB(int i, int r, int g, int b)
   {
     led_strip_set_pixel(_ls, i, r, g, b);
