@@ -15,10 +15,17 @@ void InitRtEnvHL()
 {
   LibVers();
   SvProtocol3::Init();
-  OpenNVS();
+  InitNVS();
+  openRtEnvStore();
   CheckNodeLock();
-  CloseNVS();
+  closeRtEnvStore();
 }
+
+void MyDelay(int aMSec)
+{
+  vTaskDelay(aMSec / portTICK_PERIOD_MS);
+}
+
 
 void GpIoInit(uint64_t aBitMask, bool aIn)
 {

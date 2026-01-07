@@ -12,10 +12,8 @@
 void LibVers();
 void InitRtEnvHL();
 
-inline void MyDelay(int aMSec)
-{
-  vTaskDelay(aMSec/portTICK_PERIOD_MS);
-}
+void MyDelay(int aMSec);
+
 
 void GpIoInit(uint64_t aBitMask, bool aIn=false);
 

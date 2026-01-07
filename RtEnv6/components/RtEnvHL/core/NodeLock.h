@@ -13,9 +13,11 @@ void fls();
 
 void PrintMac(const char* aTxt, uint8_t addr[]);
 
-void OpenNVS();
+void InitNVS();
 
-void CloseNVS();
+void openRtEnvStore();
+
+void closeRtEnvStore();
 
 void Mac2NVS(uint32_t aFeatures);
 

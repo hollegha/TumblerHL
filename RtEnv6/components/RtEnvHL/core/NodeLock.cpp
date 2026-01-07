@@ -9,7 +9,7 @@
 #include "esp_mac.h"
 #include "NodeLock.h"
 
-static nvs_handle_t nvsHan = 0;
+nvs_handle_t nvsRtEnv = 0; 
 
 uint32_t gFeatures = 0;
 
@@ -33,15 +33,27 @@ void PrintMac(const char* aTxt, uint8_t addr[])
   printf("\n"); fls();
 }
 
-void OpenNVS()
+void InitNVS()
 {
-  ESP_ERROR_CHECK(nvs_flash_init());
-  ESP_ERROR_CHECK(nvs_open("esp1", NVS_READWRITE, &nvsHan));
+  printf("InitNVS\n");
+  esp_err_t ret = nvs_flash_init();
+  if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+    ESP_ERROR_CHECK(nvs_flash_erase());
+    ret = nvs_flash_init();
+    printf("!!NVS erased!!\n");
+  }
+  ESP_ERROR_CHECK(ret);
 }
 
-void CloseNVS()
+void openRtEnvStore()
 {
-  nvs_close(nvsHan);
+  // ESP_ERROR_CHECK(nvs_flash_init()); once in InitRtEnv()
+  ESP_ERROR_CHECK(nvs_open("esp1", NVS_READWRITE, &nvsRtEnv));
+}
+
+void closeRtEnvStore()
+{
+  nvs_close(nvsRtEnv);
 }
 
 void Mac2NVS(uint32_t aFeatures)
@@ -49,17 +61,17 @@ void Mac2NVS(uint32_t aFeatures)
   uint8_t addr[6];
   ESP_ERROR_CHECK(esp_efuse_mac_get_default(addr));
   PrintMac("mac->nvs", addr);
-  ESP_ERROR_CHECK(nvs_set_blob(nvsHan, "esp2", addr, 6));
-  ESP_ERROR_CHECK(nvs_set_u32(nvsHan, "esp3", aFeatures));
-  ESP_ERROR_CHECK(nvs_commit(nvsHan));
+  ESP_ERROR_CHECK(nvs_set_blob(nvsRtEnv, "esp2", addr, 6));
+  ESP_ERROR_CHECK(nvs_set_u32(nvsRtEnv, "esp3", aFeatures));
+  ESP_ERROR_CHECK(nvs_commit(nvsRtEnv));
 }
 
 void ShowMacAll()
 {
   uint8_t addr[10];
   size_t len;
-  MY_ERR1(nvs_get_blob(nvsHan, "esp2", addr, &len));
-  MY_ERR1(nvs_get_u32(nvsHan, "esp3", &gFeatures));
+  MY_ERR1(nvs_get_blob(nvsRtEnv, "esp2", addr, &len));
+  MY_ERR1(nvs_get_u32(nvsRtEnv, "esp3", &gFeatures));
   PrintMac("NVS", addr);
   ESP_ERROR_CHECK(esp_efuse_mac_get_default(addr));
   PrintMac("MAC", addr);
@@ -70,8 +82,8 @@ void CheckNodeLock()
 {
   uint8_t addr1[10], addr2[10];
   size_t len;
-  MY_ERR1(nvs_get_blob(nvsHan, "esp2", addr1, &len));
-  MY_ERR1(nvs_get_u32(nvsHan, "esp3", &gFeatures));
+  MY_ERR1(nvs_get_blob(nvsRtEnv, "esp2", addr1, &len));
+  MY_ERR1(nvs_get_u32(nvsRtEnv, "esp3", &gFeatures));
   ESP_ERROR_CHECK(esp_efuse_mac_get_default(addr2));
   for (int i = 0; i < 6; i++)
     if (addr1[i] != addr2[i])
