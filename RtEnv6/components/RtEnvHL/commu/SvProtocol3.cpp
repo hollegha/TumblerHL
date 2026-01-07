@@ -170,7 +170,6 @@ SvProtocol3& SvProtocol3::WrStr(const char* aStr)
 
 
 extern "C" {
-void InitNVS();
 int wifi_init_sta();
 void wifi_init_softap(char* aName, int aChan);
 void print_own_ip_addr();
@@ -180,7 +179,7 @@ int InitUdp();
 void InitStation()
 {
 #ifdef USE_UDP
-  InitNVS();
+  // InitNVS(); done in InitRtEnvHL()
   if (-1 == wifi_init_sta()) MyError("wifi");
   svSock = InitUdp();
   if (svSock == -1) MyError("sock");
@@ -190,7 +189,7 @@ void InitStation()
 void InitSoftAp(const char* aName, int aChan)
 {
 #ifdef USE_UDP
-  InitNVS();
+  // InitNVS(); done in InitRtEnvHL()
   wifi_init_softap((char*)aName, aChan);
   print_own_ip_addr();
   svSock = InitUdp();
