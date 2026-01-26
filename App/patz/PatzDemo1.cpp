@@ -15,8 +15,7 @@ void CommandLoop()
   while (1) {
     cmd = ua0.GetCommand();
     if (cmd == 2) {
-      float pow = ua0.ReadF();
-      motR.setPow2(pow); motL.setPow2(pow);
+      motL.setPow2(ua0.ReadF()); motR.setPow2(ua0.ReadF());
       ua0.SvMessage("Set Pow");
     }
     if (cmd == 3) {
