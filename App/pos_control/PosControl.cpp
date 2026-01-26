@@ -1,11 +1,11 @@
 
 #include "RTEnvHL.h"
-#include "SvProtocol2.h"
+#include "SvProtocol3.h"
 #include "EspMotor.h"
-#include "Controllers.h"
-#include "MotorIO.h"
+#include "PosControl.h"
+#include "MotorSetup.h"
 
-SvProtocol2 ua0;
+SvProtocol3 ua0;
 
 // Rate KP KD
 PosController rglL(200.0, 0.1, 0.01, "PosC");
@@ -65,7 +65,7 @@ void CommandLoop()
   }
 }
 
-extern "C" void Monitor(void* arg)
+void Monitor(void* arg)
 {
   while (1) {
     vTaskDelay(1);
@@ -88,9 +88,9 @@ extern "C" void Monitor(void* arg)
 extern "C" void app_main(void)
 {
   printf("PosControl\n");
-  InitRtEnvHL(); 
-  InitIO();
-  MyDelay(100); InitUart(UART_NUM_2, 115200); MyDelay(100); // 115200
-  xTaskCreate(Monitor, "Monitor", 1024, NULL, 10, NULL);
+  InitRtEnvHL(); InitMotors();
+  // InitUart(UART_NUM_0, 500000);
+  InitSoftAp("sepp", 5);
+  createTask(Monitor, "Monitor", 2048, 10);
   CommandLoop();
 }
