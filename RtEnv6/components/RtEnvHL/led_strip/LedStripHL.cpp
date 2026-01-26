@@ -1,6 +1,8 @@
 
 #include "LedStripHL.h"
 
+LedStripHL leds;
+
 void MyDelay(int aMSec); // from RtEnv
 
 void LedStripHL::Init()
@@ -37,4 +39,23 @@ void LedStripHL::blink(int from, int to, uint16_t aHue, int aN)
     MyDelay(200);
   }
 }
+
+
+void LedStripHL::setAmplitude(int i, float val)
+{
+  float MAX_INTEN = 200.0;
+
+  if (val > 1.0)
+    val = 1.0;
+  int r, g, b;
+  r = g = b = 0;
+  if (val < 0.33)
+    r = MAX_INTEN * val;
+  else if (val < 0.66)
+    b = MAX_INTEN * (val - 0.33);
+  else
+    g = MAX_INTEN * (val - 0.66);
+  led_strip_set_pixel(_ls, i, r, g, b);
+}
+  
 
