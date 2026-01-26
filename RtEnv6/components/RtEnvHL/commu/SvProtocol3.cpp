@@ -1,10 +1,14 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_timer.h"
 #include "SvProtocol3.h"
 #include "lwip/sockets.h"
 #include "NodeLock.h"
 #include "Features.h"
+#include "LedStripHL.h"
+
+void MyDelay(int aMSec);
 
 #define UA_BUF_SIZE (1024)
 
@@ -61,10 +65,26 @@ void InitUart(uart_port_t uaNum, int aBaud)
 
 // esp_err_t uart_get_buffered_data_len(uart_port_t uart_num, size_t* size);
 
+
+void cycleBlink(int rateReduce)
+{
+  static int cnt = 0;
+  if (++cnt > rateReduce) {
+    cnt = 0;
+    leds.toggle(6,7, H_ORANGE);
+    leds.refresh();
+  }
+}
+
+
 void SvProtocol3::WriteIO(void* aData, size_t aLen)
 {
 #ifdef USE_UDP
+  int64_t t1 = esp_timer_get_time();
   sendto(svSock, aData, aLen, 0, (struct sockaddr*)&g_source_addr, SOCK_LEN2);
+  sendTim = esp_timer_get_time() - t1;
+  if (sendTim > maxSendTim)
+    maxSendTim = sendTim;
 #else
   uart_write_bytes(gUaNum, aData, aLen);
 #endif
@@ -196,7 +216,6 @@ void InitSoftAp(const char* aName, int aChan)
   if (svSock == -1) MyError("sock");
 #endif
 }
-
 
 extern "C" void UdpConnCB(int val)
 {

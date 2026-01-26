@@ -49,5 +49,5 @@ public:
 };
 
 extern ButtonHandler hbtn;
-extern LedStripHL leds;
+
 

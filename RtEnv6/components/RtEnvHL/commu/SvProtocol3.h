@@ -7,7 +7,7 @@
 #include "stdint.h"
 #include "driver/uart.h"
 
-// #define USE_UDP
+#define USE_UDP 
 
 void MyError(const char* txt);
 
@@ -28,6 +28,7 @@ void InitSoftAp(const char* aName, int aChan);
 
 void InitUart(uart_port_t uaNum, int aBaud);
 
+void cycleBlink(int rateReduce);
 
 class UdpRd {
 public:
@@ -75,17 +76,21 @@ private:
   static const int BUFF_SZ = 256;
   uint8_t buff[BUFF_SZ];
   int idx;
+  int roundCnt;
   uint8_t resetFlag;
 #ifdef USE_UDP
   UdpRd udp;
 #endif 
 public:
   uint8_t acqON;
+  int sendTim;
+  int maxSendTim;
 public:
   SvProtocol3()
   {
     idx = acqON = 0;
     resetFlag = 1;
+    sendTim = maxSendTim = roundCnt = 0;
   }
 
   static void Init();
@@ -103,10 +108,19 @@ public:
     WriteIO(buff, idx); idx = 0;
   }
 
-  void CkeckFlush(int aNumBytes)
+  void Flush2(int aNumBytes)
   {
     if (idx >= aNumBytes)
       Flush();
+  }
+
+  void Flush3(int aNumRounds)
+  {
+    roundCnt++;
+    if (roundCnt >= aNumRounds) {
+      WriteIO(buff, idx); idx = 0;
+      roundCnt = 0;
+    }
   }
 
   void Reset()

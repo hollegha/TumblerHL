@@ -2,12 +2,11 @@
 #include "TmbMenues.h"
 
 ButtonHandler hbtn(2);
-LedStripHL leds;
+
 
 void InitTmbMenue()
 {
   hbtn.Init();
-  leds.Init();
 }
 
 
