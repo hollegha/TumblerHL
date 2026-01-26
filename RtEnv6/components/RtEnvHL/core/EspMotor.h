@@ -4,7 +4,6 @@
 #include "TimerHL.h"
 #include "math.h"
 
-
 class RcServo {
 public:
   int offset;
@@ -75,120 +74,14 @@ public:
     }
     SetPwPercent(hpwm, aPow);
   }
+  
   // Tumbler Motor
-  void setPow2(float aPow)
-  {
-    if (aPow > 0.95) aPow = 0.95;
-    if (aPow < -0.95) aPow = -0.95;
-    pow = aPow;
-    if (aPow >= 0) {
-      setDirPin(false);
-    }
-    else {
-      aPow = -aPow;
-      setDirPin(true);
-    }
-    SetPwPercent(hpwm, aPow);
-    if (pow > 0) dir = 1.0;
-    else if (pow < 0) dir = -1.0;
-    else dir = 0.0;
-  }
-  void setDirPin(bool dir)
-  {
-    if( dir )
-      if( !inv )
-        gpio_set_level((gpio_num_t)_fwd, 1);
-      else
-        gpio_set_level((gpio_num_t)_fwd, 0);
-    else
-      if (!inv)
-        gpio_set_level((gpio_num_t)_fwd, 0);
-      else
-        gpio_set_level((gpio_num_t)_fwd, 1);
-  }
+  void setPow2(float aPow);
+  void setDirPin(bool dir);
 private:
   int _pwm, _fwd, _rev;
   PwmHL hpwm;
   static PwmTim tim;
-};
-
-class Tp2OrdF;
-
-class Encoder {
-  const float FREQU_FACT = 1E6;
-  const float DT_FACT = 150.0;
-public:
-  Encoder(int aInt, int aDir, Motor* aMot);
-  void Init();
-  void ISRFunction();
-  // Tumbler
-  void ISRFunction2();
-  void setBW(int aFiltNum); // 1..small -> 5..big 0..off
-
-  // 1-Chan Encoder
-  void CalcFilt();
-
-  // 2-Chan Encoder
-  void CalcFilt2();
-
-  void CalcDiff(float aVal);
-  // unsigned
-  float getFrequUS() 
-  {
-    return (1.0 / (float)pw) * FREQU_FACT;
-  }
-  // signed
-  float getFrequ() 
-  {
-    if (actDir > 0)
-      return (1.0 / (float)pw) * FREQU_FACT;
-    else if (actDir < 0)
-      return (-1.0 / (float)pw) * FREQU_FACT;
-    else
-      return 0.0;
-  }
-  // filtert
-  float getFrequF(); 
-  float getDiff()
-  {
-    return diff * DT_FACT;
-  }
-  int getPW()
-  {
-    if (pw > 32000)
-      return 32000;
-    else
-      return pw;
-  }
-  int getDir()
-  {
-    return actDir;
-  }
-  void syncDir()
-  {
-    actDir = *dirFlag;;
-  }
-  void checkDir();
-  int absCnt()
-  {
-    if ((int)cnt < 0)
-      return -(int)cnt;
-    return cnt;
-  }
-private:
-  int _dirPin, _intrPin;
-  float actDir, *dirFlag;
-  bool filtOn;
-  int64_t _t1;
-  uint32_t _runFlag, ignCnt;
-  Tp2OrdF* _filt;
-  float z1, z2, z3;
-public:
-  uint32_t cnt;
-  uint32_t pw;
-  float diff;
-  bool inv;
-  int info;
 };
 
 
@@ -238,38 +131,10 @@ public:
     if (aRate == 0) on = 0;
     _rate = aRate / F_SAMPLE;
   }
-  void CalcOneStep()
-  {
-    goesUp = 0;
-    if (!on) {
-      out = in; return;
-    }
-    if (fabs(out - in) <= _rate) {
-      out = in; return;
-    }
-    if (in > 0 && in > out)
-      goesUp = 1;
-    if (in < 0 && in < out)
-      goesUp = 1;
-    if (in > out)
-    {
-      out += _rate;
-    }
-    else
-    {
-      out -= _rate;
-    }
-  }
+  void CalcOneStep();
 public:
   float _rate;
 };
 
-
-
-
-
-
-
-
-
-
+// motor and encoder are one thing for the user
+#include "Encoder2.h"

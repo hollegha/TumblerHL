@@ -3,6 +3,8 @@
 
 void I2cInit();
 
+void initMPU(); // calls I2cInit()
+
 class MPU6050 {
 public:
   int acc[3];   // acc raw vals
@@ -37,5 +39,5 @@ public:
   void setSleepMode(bool state);
 };
 
-// extern MPU6050 mpu;
+extern MPU6050 mpu;
 

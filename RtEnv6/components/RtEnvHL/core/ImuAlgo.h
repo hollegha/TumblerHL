@@ -13,10 +13,14 @@ public:
   void CalcFilt();
   void CalcFilt(int idx);
   int getVal(int idx);
+
+  // narrow BW 1Ord
   float getFilt1(int idx); // Tp1Ord
+  // broad BW 2nd Ord
   float getFilt2(int idx); // Tp2Ord
-  void SetAlpha(float aAlpha);
-  void CalGyro();
+  void SetAlpha(float aAlpha); // Tp1Ord
+
+  void CalGyro(bool readSensor=true);
 private:
   Tp1Ord* f1[3];
   Tp2OrdF* f2[3];

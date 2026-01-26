@@ -142,23 +142,34 @@ gptimer_handle_t GpTimCreate(gptimer_alarm_cb_t aCB)
 }
 
 
-esp_timer_handle_t EspTimSetup(int aFrequ, esp_timer_cb_t aCB, bool useISR)
+esp_timer_handle_t EspTimSetup(int aFrequ, esp_timer_cb_t aCB, 
+  void* aArg, bool useISR)
 {
   esp_timer_create_args_t args = {
     .callback = aCB,
+    .arg = aArg,
     .dispatch_method = ESP_TIMER_TASK,
-    .name = "rt"
+    .name = "rt",
+    .skip_unhandled_events = true
   };
-  // if( useISR ) geht in der Lib momentan nicht
-  	// args.dispatch_method = ESP_TIMER_ISR;
+  /* if (useISR) // geht in der Lib momentan nicht
+    args.dispatch_method = ESP_TIMER_ISR; */
   esp_timer_handle_t htim;
   ESP_ERROR_CHECK(esp_timer_create(&args, &htim));
   ESP_ERROR_CHECK(esp_timer_start_periodic(htim, 1000000 / aFrequ));
   return htim;
 }
 
+static void task_trg_isr(void* arg)
+{
+  TaskHandle_t* tsk = (TaskHandle_t*)arg;
+  BaseType_t flag = pdFALSE;
+  vTaskNotifyGiveFromISR(*tsk, &flag);
+  // portYIELD_FROM_ISR(flag);
+}
 
-
-
-
+esp_timer_handle_t TimerISR2Task(int aFrequ, TaskHandle_t* task)
+{
+  return EspTimSetup(aFrequ, task_trg_isr, task, true);
+}
 

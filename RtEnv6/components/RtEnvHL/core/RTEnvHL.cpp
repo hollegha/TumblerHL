@@ -5,6 +5,7 @@
 #include "FloatFilt.h"
 #include "NodeLock.h"
 #include "Features.h"
+#include "LedStripHL.h"
 
 void LibVers()
 {
@@ -19,11 +20,25 @@ void InitRtEnvHL()
   openRtEnvStore();
   CheckNodeLock();
   closeRtEnvStore();
+  leds.Init();
+  leds.blink(0, 7, H_GREEN2, 3);
 }
 
 void MyDelay(int aMSec)
 {
   vTaskDelay(aMSec / portTICK_PERIOD_MS);
+}
+
+
+TaskHandle_t createTask(TaskFunction_t func, const char* name,
+  int stackSz, int prio, int core)
+{
+  TaskHandle_t han;
+  if( core==-1 )
+    xTaskCreate(func, name, stackSz, NULL, prio, &han);
+  else
+    xTaskCreatePinnedToCore(func, name, stackSz, NULL, prio, &han, core);
+  return han;
 }
 
 
@@ -83,6 +98,21 @@ void Adc1::Init()
 
 
 
+
+UsDist::UsDist(int aTrg, int aEcho)
+{
+  trg = (gpio_num_t)aTrg;
+  echo = (gpio_num_t)aEcho;
+  dist = 0;
+}
+
+Tp1Ord usTp;
+
+void UsDist::setAlpha(float alpha)
+{
+  usTp.SetAlpha(alpha);
+}
+
 static void IRAM_ATTR dist_isr(void* arg)
 {
   ((UsDist*)arg)->echoISR();
@@ -93,10 +123,12 @@ void UsDist::Init()
   GpIoInit(1ULL << trg, false);
   gpio_set_level(trg, 0);
   GpIoInitInterrupt(echo, dist_isr, this, GPIO_INTR_ANYEDGE);
+  usTp.SetAlpha(0.2);
 }
 
 void UsDist::startMeas()
 {
+  usTp.CalcOneStep(dist);
   gpio_set_level(trg, 1);
   esp_rom_delay_us(12);
   gpio_set_level(trg, 0);
@@ -108,6 +140,11 @@ void UsDist::echoISR()
     stw.Reset();
   else
     dist = stw.val();
+}
+
+float UsDist::getFilt()
+{
+  return usTp.y;
 }
 
 

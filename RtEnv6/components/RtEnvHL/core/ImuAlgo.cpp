@@ -8,7 +8,7 @@
 
 extern MPU6050 mpu;
 
-void ImuChan::CalGyro()
+void ImuChan::CalGyro(bool readSensor)
 {
   int sum[3], i;
   for (i = 0; i < 3; i++) {
@@ -16,15 +16,17 @@ void ImuChan::CalGyro()
     this->offset[i] = 0;
   }
   
-  for (int nCal = 1; nCal <= 300; nCal++) {
+  for (int nCal = 1; nCal <= 500; nCal++) {
     esp_rom_delay_us(3000);
-    mpu.getGyro(); this->CalcFilt();
+    if( readSensor )
+      mpu.getGyro(); 
+    this->CalcFilt();
     for (i = 0; i < 3; i++)
       sum[i] += this->getFilt2(i);
   }
 
   for (i = 0; i < 3; i++)
-    this->offset[i] = sum[i] / 300;
+    this->offset[i] = sum[i] / 500;
 }
 
 ImuChan::ImuChan(int* aValAry, int type)
@@ -92,9 +94,9 @@ void KalmSimple::CalcFilter(float accVal, float gyroVal)
   if (accVal > ACC_MAX) accVal = ACC_MAX;
   if (accVal < -ACC_MAX) accVal = -ACC_MAX;
   accAngle = 10.0f * RAD_GRAD * asin((float)accVal / (float)ACC_MAX);
-  omega = GY_ANGLE_FACT * DT_SENS * gyroVal;
+  omega = GY_ANGLE_FACT * gyroVal;
   
-  gySum += omega;
+  gySum += omega * DT_SENS;
   complAngle = BETA*(complAngle + omega) + ALPHA*accAngle;
 }
 

@@ -5,7 +5,15 @@
 #include "driver/i2c.h"
 #include "Features.h"
 
+MPU6050 mpu;
 #define I2C_TIM_O (1000/portTICK_PERIOD_MS)
+
+void initMPU()
+{
+  I2cInit(); 
+  printf("Conn: %X\n", mpu.testConnection()); 
+  mpu.Init();
+}
 
 void I2cDelay()
 {

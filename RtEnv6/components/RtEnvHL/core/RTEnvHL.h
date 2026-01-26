@@ -14,6 +14,9 @@ void InitRtEnvHL();
 
 void MyDelay(int aMSec);
 
+// core=-1 any core
+TaskHandle_t createTask( TaskFunction_t func,
+                         const char* name, int stackSz, int prio, int core=-1);
 
 void GpIoInit(uint64_t aBitMask, bool aIn=false);
 
@@ -173,15 +176,12 @@ class UsDist {
   gpio_num_t trg, echo;
   StopWatch stw;
 public:
-  UsDist(int aTrg, int aEcho)
-  {
-    trg = (gpio_num_t)aTrg;
-    echo = (gpio_num_t)aEcho;
-    dist = 0;
-  }
+  UsDist(int aTrg, int aEcho);
   void Init();
+  void setAlpha(float alpha);
   void startMeas();
   void echoISR();
+  float getFilt();
 public:
   uint32_t dist;
 };
