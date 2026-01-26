@@ -10,13 +10,13 @@ const int CAL_VALS  = 3;
 const int POS_VALS = 4;
 const int ENCODERS = 5;
 
-class LineChannel{
+class LineChannel {
   const float ALPHA = 0.07; // 0.07
   const float BETHA = 1 - ALPHA;
 public:
   LineChannel()
   {
-    initCal(); y = rawVal = 0;
+    initCal(); y = rawVal = cnt = 0;
   }
   void readADC()
   {
@@ -55,6 +55,7 @@ public:
 public:
   int rawVal;
   float y;
+  int cnt; // lenght of crossing
 public:
   int _min, _max;
   float _k;
@@ -85,10 +86,26 @@ public:
   {
     return lsAry[i].y;
   }
-
   int rawVal(int i)
   {
     return lsAry[i].rawVal;
+  }
+
+  void initCrossCnt()
+  {
+    for (int i = 0; i < N_LS_CHAN; i++)
+      lsAry[i].cnt = 0;
+  }
+  void countCrossing(float aThrs)
+  {
+    for (int i = 0; i < N_LS_CHAN; i++) {
+      if (lsAry[i].y > aThrs)
+        lsAry[i].cnt++;
+    }
+  }
+  int cossCnt(int i)
+  {
+    return lsAry[i].cnt;
   }
   
   void readADC()
@@ -97,18 +114,17 @@ public:
       lsAry[i].readADC();
   }
 
+  void dispOnLeds();
   void dispRawVals(SvProtocol3* ua)
   {
     for (int i = 0; i < N_LS_CHAN; i++)
       ua->WriteSvI16(i + 1, lsAry[i].rawVal);
   }
-
   void dispYVals(SvProtocol3* ua)
   {
     for (int i = 0; i < N_LS_CHAN; i++)
       ua->WriteSvI16(i + 1, lsAry[i].y);
   }
-
   void dispMinMax(SvProtocol3* ua)
   {
     ua->SvMessage("Min Max");
@@ -121,25 +137,21 @@ public:
     lsAry[idx]._min = aMin; lsAry[idx]._max = aMax;
     lsAry[idx]._k = CAL_AMPL / (float)(aMax - aMin);
   }
-  
   void initCal()
   {
     for (int i = 0; i < N_LS_CHAN; i++)
       lsAry[i].initCal();
   }
-
   void calStep()
   { // y must be filtered
     for (int i = 0; i < N_LS_CHAN; i++)
       lsAry[i].calcCalibration();
   }
-
   void calcCalFilt()
   {
     for (int i = 0; i < N_LS_CHAN; i++)
       lsAry[i].calcCalFilt();
   }
-
   void calcCal()
   {
     for (int i = 0; i < N_LS_CHAN; i++)
@@ -148,7 +160,6 @@ public:
 
   void cal2nvs();
   int nvs2cal();
-
 public:
   Tp1Ord tp;
 protected:
@@ -167,22 +178,21 @@ public:
 
   float pos()
   {
-    return (float)_pos * (1.0 / 8000.0);
+    return (float)_pos * (1.0 / 3700.0); // 8000
   }
-
   float posDiff()
   {
     return _posDiff * (1.0 / 200.0);
   }
 
   void initADC();
-
   void setDefaultCalib();
 
   void calcPos();
+  void calcPos2();
 
   bool checkRange(int idxL, int idxR);
-
+  
   bool isMidZero()
   {
     const float LOW_LEVEL = 50;
@@ -191,7 +201,6 @@ public:
       return true;
     return false;
   }
-
   bool allZero()
   {
     const float LOW_LEVEL = 60;
@@ -200,7 +209,6 @@ public:
         return false;
     return true;
   }
-
   // uses rawVal
   bool floorVisible()
   {
@@ -209,10 +217,9 @@ public:
         return true;
     return false;
   }
-
   bool posInRange()
   {
-    if (_pos<6500 && _pos>-6500)
+    if (_pos<3700 && _pos>-3700) // 6500
       return true;
     return false;
   }

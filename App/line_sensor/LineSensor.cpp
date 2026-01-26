@@ -6,8 +6,11 @@
 #include "esp_system.h"
 #include "nvs_flash.h"
 #include "nvs.h"
+#include "LedStripHL.h"
 
 extern nvs_handle_t nvsRtEnv; 
+
+// Ls0 == links von vorne gesehen
 
 
 void LineSensor::cal2nvs()
@@ -40,6 +43,16 @@ int LineSensor::nvs2cal()
     lsAry[i].cal2_kd();
   }
   return ESP_OK;
+}
+
+void LineSensor::dispOnLeds()
+{
+  leds.clear();
+  for (int i = 0; i < 6; i++) {
+    if (Y(i) > 50.0)
+      leds.setAmplitude(i + 1, Y(i) * (1.0 / CAL_AMPL));
+  }
+  leds.refresh();
 }
 
 
@@ -122,6 +135,24 @@ void LsPololu::calcPos()
   _posDiff = tp.y - z2;
   z2 = z1; z1 = tp.y;
   _posDiff = _posDiff * (1.0 / 3.0);
+}
+
+void LsPololu::calcPos2()
+{
+  if (lsAry[0].y < 1200 && lsAry[5].y < 1200 && isMidZero()) {
+    return;
+  }
+
+  float sum = 0;
+  for (int i = 0; i < N_LS_CHAN; i++)
+    sum += Y(i);
+  if (sum == 0) sum = 1;
+
+  float weight = 0;
+  for (int i = 0; i < N_LS_CHAN; i++)
+    weight += Y(i) * (i * RG_MAX);
+
+  _pos = (weight / sum) - 2.5 * RG_MAX;
 }
 
 bool LsPololu::checkRange(int idxL, int idxR)

@@ -4,10 +4,9 @@
 #include "EspMotor.h"
 #include "LineController.h"
 
-
 LsPololu ls;
 // 0.7  0.01 
-LinePID lpd(0.8, 0.0, 0.0, 0.0, "LinePD");
+LinePID lpd(0.6, 0.0, 0.0, 0.0, "LinePD");
 
 extern Motor motL, motR;
 extern Encoder encL, encR;
@@ -17,7 +16,7 @@ TTMailBox drCmd;
 RangeClip<float> rg(0.1, 0.95);
 
 
-extern "C" void Monitor(void* arg);
+extern "C" void RglTask(void* arg);
 extern "C" void CommandLoop(void* arg);
 
 void InitLineControler()
@@ -26,15 +25,16 @@ void InitLineControler()
   ls.initADC();
   if( ESP_OK!=ls.nvs2cal() ) // ls.setDefaultCalib();
     ls.initCal();
-  ls.mode = DISP_RAW;
+  ls.mode = CAL_VALS;
   lpd.onOff(false);
-  xTaskCreate(Monitor, "Mon", 2048, NULL, 10, NULL); // 10=Prio
+  // xTaskCreatePinnedToCore(Monitor, "Mon", 2048, NULL, 10, NULL, 1);
+  EspTimSetup(200, RglTask, NULL, false);
   xTaskCreate(CommandLoop, "Cmd", 2048, NULL, 8, NULL); 
 }
 
 void LinePID::calcOneStep()
 {
-  const float DT = 0.01;
+  const float DT = 0.005;
   float pos = ls.pos();
   if( KI!=0 )
     sum += pos;
@@ -116,6 +116,15 @@ extern "C" void CommandLoop(void* arg)
       ls.nvs2cal();
       ua0.SvMessage("NVS -> cal");
     }
+    else if (cmd == 15) { // send Time
+      int flag = ua0.ReadI16();
+      ua0.SvPrintf("st %d %d", ua0.sendTim, ua0.maxSendTim);
+      ua0.maxSendTim = 0;
+    }
+    else if (cmd == 16) {
+      encL.cnt = encR.cnt = 0;
+      ua0.SvMessage("reset enc");
+    }
     else if (cmd == 200 || cmd == 201)
       ControlParams(cmd);
     else if (cmd == 50) {
@@ -147,6 +156,7 @@ void Display()
 {
   if (!ua0.acqON)
     return;
+  ua0.LockOStream();
   if (ls.mode == DISP_RAW) {
     ls.dispRawVals(&ua0);
   }
@@ -156,23 +166,21 @@ void Display()
   else if (ls.mode == CAL_VALS) {
     ls.dispYVals(&ua0);
     ua0.WriteSvI16(7, ls._pos);
-    ua0.WriteSvI16(8, ls._posDiff);
+    // ua0.WriteSvI16(8, ls._posDiff);
   }
   else if (ls.mode == ENCODERS) {
     ua0.WriteSvI16(1, (int)encL.cnt);
     ua0.WriteSvI16(2, (int)encR.cnt);
   }
-  ua0.Flush();
+  ua0.Flush3(4);
+  ua0.UnlockOStream();
+  // cycleBlink(20);
 }
 
-extern "C" void Monitor(void* arg)
+extern "C" void RglTask(void* arg)
 {
-  while (1) 
-  {
-    vTaskDelay(1);
-    ExecLineSensor();
-    Display();
-  }
+  ExecLineSensor();
+  Display();
 }
 
 void ExecLineSensor()
@@ -184,7 +192,7 @@ void ExecLineSensor()
   }
   else if (ls.mode == CAL_VALS) {
     ls.calcCal();
-    ls.calcPos();
+    ls.calcPos2();
   }
   if (lpd.on) {
     /* if (!ls.posInRange()) {

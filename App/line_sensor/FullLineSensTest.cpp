@@ -86,6 +86,7 @@ void Display()
 
 extern "C" void Monitor(void* arg)
 {
+  int usCnt = 0;
   while (1) {
     vTaskDelay(1);
     ls.readADC();
@@ -95,9 +96,14 @@ extern "C" void Monitor(void* arg)
     }
     else if (ls.mode == CAL_VALS) {
       ls.calcCal();
-      ls.calcPos();
+      ls.calcPos2();
     }
     Display();
+    if (ls.mode == CAL_VALS) {
+      if (++usCnt >= 10) {
+        usCnt = 0; ls.dispOnLeds();
+      }
+    }
   }
 }
 
@@ -107,6 +113,7 @@ extern "C" void app_main(void)
   InitRtEnvHL();
   InitLineSensor();
   InitUart(UART_NUM_0, 500000);
+  // InitSoftAp("sepp", 5);
   xTaskCreate(Monitor, "Mon", 2048, NULL, 10, NULL);
   CommandLoop();
 }
