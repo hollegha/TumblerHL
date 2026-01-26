@@ -7,23 +7,24 @@ const int PWA = 4, AI1 = 16, PWB = 18, BI1 = 23, ST_BY = 17;
 const int M2A = 19, M1A = 27, M2B = 25, M1B = 26;
 
 // Pinzuordnung unkritisch es werden keine ESP-Funktionen aufgerufen
-Motor motL(PWA, AI1, -1); // -1==Tumbler Motor
-Motor motR(PWB, BI1, -1);
+
+// kleine Räder
+Motor motR(PWA, AI1, -1);
+Encoder2 encR(M2A, M2B);
+Motor motL(PWB, BI1, -1);
+Encoder2 encL(M1A, M1B);
+
 GpIoOut stdby(ST_BY);
-Encoder2 encL(M2A, M2B), encR(M1A, M1B); // 2-Chan Encoder
-// GpIoIn btn(2);
 
 void InitMotors()
 {
   stdby.Init(); stdby.Set(1);
-  // btn.Init();
-  // PWM-Init in dieser Reihenfolge
   Motor::InitTimer(); motR.Init(); motL.Init(); Motor::StartTimer();
-  // Beide motoren sicherheitshalber auf 0
   motR.setPow2(0.0); motL.setPow2(0.0);
   
   encL.Init(); encR.Init();
-  encR.inv = true; motR.inv = true; // ls back
+  encR.inv = true; motR.inv = true; // kleine Räder
+  // encR.inv = true; motR.inv = true; // ls back
   
   // Die .inv Flags kann man immer und überall setzen
   // printf("InitMotors finished\n");
