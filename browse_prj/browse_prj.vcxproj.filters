@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="commu">
+      <UniqueIdentifier>{b270ea71-24d3-4cda-8c20-e68ec4a5bc96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{c195cf5d-77f6-4902-a141-1a1cd24f92ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="led_strip">
+      <UniqueIdentifier>{4dd3a688-94a4-4000-b9db-3e4719c9578a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="browse_prj.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RtEnv6\components\RtEnvHL\commu\softap_hl.c">
+      <Filter>commu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RtEnv6\components\RtEnvHL\commu\station_hl2.c">
+      <Filter>commu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RtEnv6\components\RtEnvHL\commu\SvProtocol3.cpp">
+      <Filter>commu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RtEnv6\components\RtEnvHL\commu\TmbMenues.cpp">
+      <Filter>commu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RtEnv6\components\RtEnvHL\core\Encoder2.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RtEnv6\components\RtEnvHL\core\EspMotor.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RtEnv6\components\RtEnvHL\core\ImuAlgo.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RtEnv6\components\RtEnvHL\core\MPU_Esp.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RtEnv6\components\RtEnvHL\core\NodeLock.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RtEnv6\components\RtEnvHL\core\RTEnvHL.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RtEnv6\components\RtEnvHL\core\TimerHL.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RtEnv6\components\RtEnvHL\led_strip\LedStripHL.cpp">
+      <Filter>led_strip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\app\basic\RpmTest2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\commu\SvProtocol3.h">
+      <Filter>commu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\commu\TmbMenues.h">
+      <Filter>commu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\commu\TTMailBox.h">
+      <Filter>commu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\core\ControlBasics.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\core\Encoder2.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\core\EspMotor.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\core\Features.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\core\ImuAlgo.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\core\MPU_Esp.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\core\MPU_Regs.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\core\NodeLock.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\core\RTEnvHL.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\core\TimerHL.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RtEnv6\components\RtEnvHL\led_strip\LedStripHL.h">
+      <Filter>led_strip</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
