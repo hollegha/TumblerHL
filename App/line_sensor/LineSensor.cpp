@@ -60,19 +60,19 @@ void LsPololu::initADC()
 {
   printf("LsPolo N:%d\n", N_LS_CHAN);
   // Sesor in front
-  /**lsAry[0].adc._ch = ADC_CHANNEL_0;
+  lsAry[0].adc._ch = ADC_CHANNEL_0;
   lsAry[1].adc._ch = ADC_CHANNEL_3;
   lsAry[2].adc._ch = ADC_CHANNEL_4;
   lsAry[3].adc._ch = ADC_CHANNEL_5;
   lsAry[4].adc._ch = ADC_CHANNEL_6;
-  lsAry[5].adc._ch = ADC_CHANNEL_7;*/
+  lsAry[5].adc._ch = ADC_CHANNEL_7; 
   // Sensor back
-  lsAry[0].adc._ch = ADC_CHANNEL_7;
+  /* lsAry[0].adc._ch = ADC_CHANNEL_7;
   lsAry[1].adc._ch = ADC_CHANNEL_6;
   lsAry[2].adc._ch = ADC_CHANNEL_5;
   lsAry[3].adc._ch = ADC_CHANNEL_4;
   lsAry[4].adc._ch = ADC_CHANNEL_3;
-  lsAry[5].adc._ch = ADC_CHANNEL_0;
+  lsAry[5].adc._ch = ADC_CHANNEL_0; */
   for (int i = 0; i < N_LS_CHAN; i++) {
     lsAry[i].adc.Init();
   }

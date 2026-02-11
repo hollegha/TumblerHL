@@ -1,5 +1,5 @@
 
-idf_component_register( SRCS "FullLineSensTest.cpp" 
+idf_component_register( SRCS "Labyrinth.cpp" 
                              "LineController.cpp"
                              "LineSensor.cpp"
                              

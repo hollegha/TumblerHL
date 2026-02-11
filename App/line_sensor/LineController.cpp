@@ -5,11 +5,12 @@
 #include "LineController.h"
 
 LsPololu ls;
-// 0.7  0.01 
-LinePID lpd(0.6, 0.0, 0.0, 0.0, "LinePD");
+// 0.6 sens back
+// 1.0 sens front lilla
+LinePID lpd(1.0, 0.0, 0.0, 0.0, "LinePD");
 
 extern Motor motL, motR;
-extern Encoder encL, encR;
+extern Encoder2 encL, encR;
 extern GpIoOut stdby;
 
 TTMailBox drCmd;
