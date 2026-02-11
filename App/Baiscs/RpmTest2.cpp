@@ -1,34 +1,15 @@
 
 #include "RTEnvHL.h"
-#include "SvProtocol2.h"
+#include "SvProtocol3.h"
 #include "EspMotor.h"
-#include "driver/gpio.h"
+#include "MotorSetup.h"
 
-SvProtocol2 ua0;
+SvProtocol3 ua0;
 StopWatch stw;
 int dispMode = 3;
-
-const int PWA = 4, AI1 = 32, PWB = 33, BI1 = 5, ST_BY = 18;
-const int M2A = 19, M1A = 23, M2B = 36, M1B = 39;
-
-Motor motL(PWA, AI1, -1); // -1==Tumbler Motor
-Motor motR(PWB, BI1, -1);
-GpIoOut stdby(ST_BY);
-// Encoder encL(M2A, -1, &motL), encR(M1A, -1, &motR); 1-Chan Encoder
-Encoder encL(M2A, M2B, &motL), encR(M1A, M1B, &motR); // 2-Chan Encoder
-
 RateLim limL(200), limR(200);
 
 // 160 1100
-
-void InitIO()
-{
-  stdby.Init(); stdby.Set(1);
-  Motor::InitTimer(); motR.Init(); motL.Init(); Motor::StartTimer();
-  motR.setPow2(0.0); motL.setPow2(0.0);
-  encL.Init(); encR.Init(); encR.inv = true;
-  printf("InitIO finished\n");
-}
 
 void CommandLoop()
 {
@@ -76,24 +57,28 @@ void CommandLoop()
 void DoDisp()
 {
   if (ua0.acqON) {
-    Encoder* enc = &encL;
+    Encoder2* enc = &encL;
     RateLim* lim = &limL;
     if (dispMode == 2) {
       enc = &encR; lim = &limR;
     } 
     if (dispMode<3) { // 1,2
-      ua0.WriteSvI16(1, enc->getFrequ());
-      ua0.WriteSvI16(2, enc->getFrequF());
+      ua0.WriteSvF(1, enc->getFrequ());
+      ua0.WriteSvF(2, enc->getFrequF());
       ua0.WriteSvI16(3, lim->out); // power
     }
     else if (dispMode == 3) { // 3
-      ua0.WriteSvI16(1, encL.getFrequF());
-      ua0.WriteSvI16(2, encR.getFrequF());
+      ua0.WriteSvF(1, encL.getFrequF());
+      ua0.WriteSvF(2, encR.getFrequF());
       ua0.WriteSvI16(3, limL.out);
     }
-    else { // 4
+    else if (dispMode == 4) { // 4
       ua0.WriteSvI16(1, encL.getPW());
       ua0.WriteSvI16(2, encR.getPW());
+    }
+    else if (dispMode == 5) { // 5
+      ua0.WriteSvI16(1, encL.cnt);
+      ua0.WriteSvI16(2, encR.cnt);
     }
     ua0.Flush();
   }
@@ -113,11 +98,12 @@ extern "C" void RtTask(void* arg)
 
 extern "C" void app_main(void)
 {
-  printf("RpmTest2_3\n");
+  printf("RpmTest2_1\n");
   InitRtEnvHL(); 
-  InitIO();
-  MyDelay(100); InitUart(UART_NUM_2, 115200); MyDelay(100); // 115200
-  // xTaskCreate(Monitor, "Monitor", 2048, NULL, 10, NULL);
-  EspTimSetup(300, RtTask, false);
+  InitMotors();
+  InitUart(UART_NUM_0, 500000);
+  // InitSoftAp("sepp", 5);
+  EspTimSetup(300, RtTask, 0, false);
   CommandLoop();
 }
+
