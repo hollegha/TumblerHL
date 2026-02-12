@@ -6,6 +6,8 @@
 SvProtocol3 ua0;
 #include "GyroControl.h"
 
+bool calFlag = false;
+
 void CommandLoop()
 {
   int cmd;
@@ -17,7 +19,9 @@ void CommandLoop()
     }
     else if (cmd == 3) {
       ua0.SvMessage("cal start");
-      gyro.CalGyro(false);
+      calFlag = true;
+      gyro.CalGyro(true);
+      calFlag = false;
       integ.Reset();
       ua0.SvMessage("cal finished");
     }
@@ -25,7 +29,7 @@ void CommandLoop()
       integ.Reset();
       ua0.SvMessage("reset integ");
     }
-    else if (cmd == 5) {
+    else if (cmd == 5) { 
       rgl.on = ua0.ReadI16();
       if (!rgl.on) {
         vTaskDelay(2);
@@ -34,8 +38,13 @@ void CommandLoop()
       ua0.SvMessage2("rgl ", rgl.on);
     }
     else if (cmd == 6) {
-      rgl.demand = ua0.ReadI16();
+      rgl.setDemand(ua0.ReadI16());
       ua0.SvMessage("demand");
+    }
+    else if (cmd == 7) {
+      int val = ua0.ReadI16();
+      stdby.Set(val);
+      ua0.SvMessage2("stdby", val);
     }
     else if (cmd == 200 || cmd == 201)
       ControlParams(cmd);
@@ -48,9 +57,9 @@ void Monitor(void* arg)
     vTaskDelay(1); // 100Hz
     if (ua0.acqON) {
       ua0.LockOStream();
-      ua0.WriteSvF(1, integ.gySum);
-      ua0.WriteSvF(2, rgl.abw);
-      ua0.WriteSvF(3, rgl.diff);
+      ua0.WriteSvF(1, rgl.getActDemand());
+      ua0.WriteSvF(2, integ.gySum);
+      ua0.WriteSvF(3, integ.omega);
       ua0.Flush();
       ua0.UnlockOStream();
     }
@@ -60,6 +69,8 @@ void Monitor(void* arg)
 // x, y, z  0, 1, 2
 void RglTask(void* arg)
 {
+  if (calFlag)
+    return;
   mpu.getGyro(); // read I2C
   gyro.CalcFilt(2);
   integ.CalcFilter(0, gyro.getFilt2(2));
@@ -74,8 +85,8 @@ extern "C" void app_main(void)
   printf("GyroControl\n");
   InitRtEnvHL(); InitMotors();
   initMPU();
-  InitUart(UART_NUM_0, 500000);
-  // InitSoftAp("sepp", 5);
+  // InitUart(UART_NUM_0, 500000);
+  InitSoftAp("sepp", 5);
   createTask(Monitor, "Monitor", 2048, 10);
   EspTimSetup(1000, RglTask, 0, false);
   CommandLoop();

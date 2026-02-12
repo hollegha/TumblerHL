@@ -11,17 +11,30 @@ KalmSimple integ;
 
 class AngleController : public PIDParam {
 public:
+  RateLim lim;
+public:
   AngleController(float aKP, float aKD, const char* aName)
-    : PIDParam(aKP, aKD, 0.0, 0.0, aName)
+    : PIDParam(aKP, aKD, 0.0, 0.0, aName), lim(100.0)
   {
     on = false;
-    demand = out = x_n1 = diff = abw = 0;
+    out = x_n1 = diff = abw = 0;
+    lim.F_SAMPLE = 1E3; lim.SetRateSec(100);
+  }
+
+  void setDemand(int aVal)
+  {
+    lim.in = aVal;
+  }
+  float getActDemand()
+  {
+    return lim.out;
   }
 
   void calcOneStep(float aSensVal)
   {
     const float F_SAMP = 1E3;
-    abw = demand - aSensVal;
+    lim.CalcOneStep();
+    abw = lim.out - aSensVal;
     diff = abw - x_n1; x_n1 = abw;
     diff = diff * F_SAMP;
     out = KP * abw + KD * diff;
@@ -29,7 +42,6 @@ public:
 private:
   float x_n1;
 public:
-  float demand; // sollwert
   float out;
   float diff;
   float abw;
@@ -42,6 +54,7 @@ void ControlParams(int cmd)
   if (cmd == 200) {
     int num = ua0.ReadI16();
     rgl.ReadCOM(&ua0);
+    rgl.lim.SetRateSec(rgl.rate);
     ua0.SvMessage("Set PID");
   }
   if (cmd == 201) {
