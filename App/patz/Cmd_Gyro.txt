@@ -1,0 +1,15 @@
+
+powLR 2  0.2  0.2
+
+cal 3
+
+resetInteg 4
+
+rglON  5 1
+rglOFF 5 0
+
+stByOn  7 1
+stByOff 7 0
+
+demand 6 450
+
