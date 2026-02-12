@@ -22,6 +22,11 @@ void CommandLoop()
       encL.cnt = encR.cnt = 0;
       ua0.SvMessage("reset enc");
     }
+    if (cmd == 4) {
+      int v1 = ua0.ReadI16();
+      float v2 = ua0.ReadF();
+      ua0.SvPrintf("para demo  %d  %1.2f", v1, v2);
+    }
   }
 }
 
@@ -72,6 +77,6 @@ extern "C" void app_main(void)
   InitUart(UART_NUM_0, 500000);
   // InitSoftAp("sepp", 5);
   xTaskCreate(Monitor, "Monitor", 2048, NULL, 10, NULL);
-  xTaskCreate(menueTask, "Menue", 2048, NULL, 10, NULL);
+  // xTaskCreate(menueTask, "Menue", 2048, NULL, 10, NULL);
   CommandLoop();
 }
