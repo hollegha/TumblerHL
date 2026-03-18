@@ -1,0 +1,10 @@
+
+pow 2 0.2 0.2
+resetEnc 3
+
+sollDist 4 500.0
+KP 5 0.005
+
+rglON  6 1
+rglOFF 6 0
+
