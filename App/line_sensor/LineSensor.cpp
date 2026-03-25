@@ -153,7 +153,13 @@ void LsPololu::calcPos2()
     weight += Y(i) * (i * RG_MAX);
 
   _pos = (weight / sum) - 2.5 * RG_MAX;
+
+  tp.CalcOneStep(_pos);
+  _posDiff = tp.y - z2;
+  z2 = z1; z1 = tp.y;
+  _posDiff = _posDiff * 50.0;
 }
+
 
 bool LsPololu::checkRange(int idxL, int idxR)
 {

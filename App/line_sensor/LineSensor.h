@@ -2,6 +2,8 @@
 
 #include "Tp1Ord.h"
 
+// Ls0 == links von vorne gesehen
+
 const float CAL_AMPL = 2000.0;
 
 const int DISP_RAW =  1;
@@ -79,7 +81,7 @@ public:
     mode = CAL_VALS;
     _pos = z1 = z2 = 0;
     _posDiff = 0;
-    tp.SetAlpha(0.5);
+    tp.SetAlpha(0.1);
   }
 
   float Y(int i)
@@ -195,7 +197,7 @@ public:
   
   bool isMidZero()
   {
-    const float LOW_LEVEL = 50;
+    const float LOW_LEVEL = 80; // 50
     if (lsAry[1].y < LOW_LEVEL && lsAry[2].y < LOW_LEVEL
       && lsAry[3].y < LOW_LEVEL && lsAry[4].y < LOW_LEVEL)
       return true;
@@ -203,7 +205,7 @@ public:
   }
   bool allZero()
   {
-    const float LOW_LEVEL = 60;
+    const float LOW_LEVEL = 80; // 50
     for (int i = 0; i < N_LS_CHAN; i++)
       if (lsAry[i].y > LOW_LEVEL)
         return false;

@@ -29,5 +29,6 @@ extern LinePID lpd;
 extern SvProtocol3 ua0;
 extern TTMailBox drCmd;
 
+void InitLineSensor();
 void InitLineControler();
 

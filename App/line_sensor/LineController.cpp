@@ -17,18 +17,23 @@ TTMailBox drCmd;
 RangeClip<float> rg(0.1, 0.95);
 
 
-extern "C" void RglTask(void* arg);
-extern "C" void CommandLoop(void* arg);
+void RglTask(void* arg);
+void CommandLoop(void* arg);
+void Monitor(void* arg);
 
-void InitLineControler()
+void InitLineSensor()
 {
   Adc1::atten = ADC_ATTEN_DB_11;
   ls.initADC();
-  if( ESP_OK!=ls.nvs2cal() ) // ls.setDefaultCalib();
+  if (ESP_OK != ls.nvs2cal()) // ls.setDefaultCalib();
     ls.initCal();
   ls.mode = CAL_VALS;
   lpd.onOff(false);
-  // xTaskCreatePinnedToCore(Monitor, "Mon", 2048, NULL, 10, NULL, 1);
+}
+
+void InitLineControler()
+{
+  createTask(Monitor, "Mon", 2048, 10, 1);
   EspTimSetup(200, RglTask, NULL, false);
   xTaskCreate(CommandLoop, "Cmd", 2048, NULL, 8, NULL); 
 }
@@ -68,7 +73,7 @@ void ExecLineSensor();
 void ControlParams(int cmd);
 
 
-extern "C" void CommandLoop(void* arg)
+void CommandLoop(void* arg)
 {
   int cmd;
   while (1) {
@@ -123,8 +128,8 @@ extern "C" void CommandLoop(void* arg)
       ua0.maxSendTim = 0;
     }
     else if (cmd == 16) {
-      encL.cnt = encR.cnt = 0;
-      ua0.SvMessage("reset enc");
+      motL.setPow2(ua0.ReadF()); motR.setPow2(ua0.ReadF());
+      ua0.SvMessage("set Pow");
     }
     else if (cmd == 200 || cmd == 201)
       ControlParams(cmd);
@@ -153,6 +158,7 @@ void ControlParams(int cmd)
   }
 }
 
+
 void Display()
 {
   if (!ua0.acqON)
@@ -167,21 +173,29 @@ void Display()
   else if (ls.mode == CAL_VALS) {
     ls.dispYVals(&ua0);
     ua0.WriteSvI16(7, ls._pos);
-    // ua0.WriteSvI16(8, ls._posDiff);
+    ua0.WriteSvF(8, ls._posDiff);
   }
   else if (ls.mode == ENCODERS) {
     ua0.WriteSvI16(1, (int)encL.cnt);
     ua0.WriteSvI16(2, (int)encR.cnt);
   }
-  ua0.Flush3(4);
+  // ua0.Flush3(4);
+  ua0.Flush();
   ua0.UnlockOStream();
   // cycleBlink(20);
 }
 
-extern "C" void RglTask(void* arg)
+void Monitor(void* arg)
+{
+  while (1) {
+    vTaskDelay(1);
+    Display();
+  }
+}
+
+void RglTask(void* arg)
 {
   ExecLineSensor();
-  Display();
 }
 
 void ExecLineSensor()
