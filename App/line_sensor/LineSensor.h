@@ -184,7 +184,7 @@ public:
   }
   float posDiff()
   {
-    return _posDiff * (1.0 / 200.0);
+    return _posDiff * (1.0 / 3700.0);
   }
 
   void initADC();
