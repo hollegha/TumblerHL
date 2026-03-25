@@ -2,8 +2,7 @@
 // Achtung!! Keine Kommentare innerhalb der Sections
 // Com Schnittstelle 115200
 Com:  COM4  500000
-
-// IP: 192.168.4.1
+IP: 192.168.4.1
 
 // Kanal Namen
 ChannelNames:
@@ -13,23 +12,24 @@ ChannelNames:
 	Ls4
 	Ls5
 	Ls6
+	pos
+	diff
 
 F_SAMPLE: 100
 
 // Y-Scales
-Y1Scale: -10000 10000
-Y2Scale: -1000 1000
-BarScale: 0 3000
+Y1Scale: -4000 4000
+Y2Scale: -100 3000
+BarScale: 0 4200
 
 // Graphen ( Kurven )
 Graphs:
-	xxx Y1
-	xxx Y1
-	xxx Y1
-	xxx Y1
-	xxx Y1
-	xxx Y1
-	pos1 Y1
-	xxx  Y2
+	Ls1 Y2
+	xxx Y2
+	xxx Y2
+	xxx Y2
+	xxx Y2
+	Ls6 Y2
+	pos Y1
+	diff Y1
 end
-

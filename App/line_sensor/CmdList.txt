@@ -1,12 +1,14 @@
 
 dispRaw     3 1
 calibration 3 2
-dispcal     3 3
-dispENC     3 5
+dispCal     3 3
 showCal     4
 
 cal2nvs 13
 nvs2cal 14
+
+dispENC 3 5
+resENC  12
 
 rgl_on  7 1
 rgl_off 7 0
@@ -16,11 +18,18 @@ stbyOFF 11 0
 
 forew    10  0.3
 NOforew  10  0.0
-resetENC 12
+
+sendTime  15 0
+
+diffTp 6 0.1
+
+motTst 0.2 0.2
 
 // !!DriveTask only!!
-follow   9 1 0.5
-Turn     9 3 0.2
-autoCal  9 2 0.1
-STOP     9 -1 
+follow    9 1 0.5
+Turn      9 3 0.2
+autoCal   9 2 0.1
+crossing  9 5 0.2
+crosEnd   9 6 0.3
+STOP      9 -1 
 
