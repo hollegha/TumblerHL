@@ -1,0 +1,22 @@
+
+pow1  2  0.2  0.2
+STOP  2  0.0  0.0
+
+forew   8 0.2 0.2
+NOforew 8 0.0 0.0
+
+demand0 6 0
+demand1 6 1800
+demand2 6 450
+
+cal 3
+resetInteg 4
+
+rglON  5 1
+rglOFF 5 0
+
+stByOn  7 1
+stByOff 7 0
+
+drive 10 1 0.3 1200
+STOP  11
