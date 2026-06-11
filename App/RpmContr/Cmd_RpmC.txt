@@ -1,0 +1,23 @@
+
+Pow 2 0.0 0.0
+Pow 2 0.1 0.1
+Pow 2 0.2 0.2
+Pow 2 0.5 0.5
+
+soll 3 0 0
+soll 3 700 700
+soll 3 -700 -700
+
+
+rglON  4 1
+rglOFF 4 0
+
+// 1..5
+Filt 7 1
+
+ResCnt 5
+
+
+
+
+
