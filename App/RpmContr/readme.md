@@ -12,5 +12,5 @@ SimpleProfile.cpp
    trapetz geschw. profil  
 
 AdvProfile.cpp
-   Verwendung des RPM-Controllers in einem besseren 
+   Verwendung des RPM-Controllers in einem besseren  
    trapetz geschw. profil
