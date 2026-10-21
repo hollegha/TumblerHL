@@ -9,4 +9,8 @@ Sv_RpmC.h und Cmd_RpmC.txt
 
 SimpleProfile.cpp
    Verwendung des RPM-Controllers in einem eifachen  
+   trapetz geschw. profil  
+
+AdvProfile.cpp
+   Verwendung des RPM-Controllers in einem besseren 
    trapetz geschw. profil
